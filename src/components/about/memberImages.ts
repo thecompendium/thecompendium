@@ -14,7 +14,7 @@ export const memberImages: MemberImage = {
   'RAHUL SATTARAPU': '/team/RAHUL-SATTARAPU.jpg',
   'K YAGNESH REDDY': '/team/k-yagnesh-reddy.jpg',
   'MULE BHARATH': '/team/mule-bharath.jpg',
-  'CHILKURI SAI CHARAN REDDY': '/team/CHILKURI-SAI-CHARAN-REDDY.jpg',
+  'CHILKURI SRI CHARAN REDDY': '/team/CHILKURI-SAI-CHARAN-REDDY.jpg',
   'ROHIT JOY': '/team/ROHIT-JOY.jpg',
   'MR X': '/team/MR X.jpg',
 };

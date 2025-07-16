@@ -30,11 +30,11 @@ const Events = () => {
   const conductedEvents = [
     {
       title: "State vs A Nobody",
-      date: "Mar 26, 2025",
+      date: "May 26, 2025",
       time: "2:00 PM to 4:00 PM",
       location: "Sangeeth Auditorium",
       description: "A unique legal simulation event that challenges participants to navigate complex legal scenarios and develop critical thinking skills.",
-      image: "/events images/STATE VS A  NOBODY.png",
+      image: "/events images/STATE VS A NOBODY.png",
       category: "Session",
       detailsPdf: "/pdfs/events/State vs A Nobody.pdf"
     },

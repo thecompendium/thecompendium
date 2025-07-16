@@ -83,7 +83,7 @@ const teamMembersByYear = {
   ],
   '2023': [
     {
-      name: "CHILKURI SAI CHARAN REDDY",
+      name: "CHILKURI SRI CHARAN REDDY",
       position: "PRESIDENT",
       image: "/team/CHILKURI-SAI-CHARAN-REDDY.jpg",
       bio: "Leading the club's vision and strategic initiatives, coordinating with different teams to drive innovation and growth."

@@ -140,7 +140,7 @@ const Contact = () => {
               
               {/* Right Column - Send a Message */}
               <div>
-                <h2 className="text-4xl font-bold mb-8 text-theme-blue dark:text-white">Send a Message</h2>
+                <h2 className="text-4xl font-bold mb-8 text-theme-blue dark:text-white">Send a message</h2>
                 
                 {submitted && (
                   <div className="mb-6 p-4 text-green-700 bg-green-100 dark:bg-green-900/20 dark:text-green-400 rounded-md">

@@ -27,7 +27,7 @@ const teamMembersByYear = {
     { name: 'HARSHINI MUNAGALA', position: 'MANAGING DIRECTOR' },
   ],
   '2023': [
-    { name: 'CHILKURI SAI CHARAN REDDY', position: 'PRESIDENT' },
+    { name: 'CHILKURI SRI CHARAN REDDY', position: 'PRESIDENT' },
     { name: 'E F TRISHA ANGELINE', position: 'CREATIVE DIRECTOR' },
     { name: 'AMRUTHA VALLABHANENI', position: 'MANAGING DIRECTOR' },
   ],
@@ -216,7 +216,7 @@ const TimelineYear = () => {
                         Some of my best memories are from our monthly meets. We’d scramble to get people to show up, but the ones who came made it worth it. Those sessions were full of debates, laughter, and the kind of energy that made it all feel special.<br /><br />
                         Looking back, The Compendium wasn’t just a club I joined but a place I truly felt belonged overtime. It was a space that helped me find my voice, build real bonds, and create some of the best memories of college. I’ll always be grateful for that.
                       </>
-                    ) : member.name === 'CHILKURI SAI CHARAN REDDY' && year === '2023' ? (
+                    ) : member.name === 'CHILKURI SRI CHARAN REDDY' && year === '2023' ? (
                       <>
                         Like many success stories, even mine did not have any shortcuts. It was the responsibility and sheer passion that I showed towards the roles that I was assigned. Starting as a content writer in the first year, to being the president of The Compendium, every position was a new dimension to be explored. The experience added an extra edge in handling the club as I had been in the shoes of my fellow club mates; showing empathy, and backing up the team in tough times is crucial to being a leader.<br /><br />
                         When I took upon the role of the president, I very well knew that it was not going be easy and fancy – both in terms of cooperation from the management and keeping up the team’s morale. The excitement and enthusiasm of any new team goes down within a snap. Being aware of this, I kept introducing new activities and events that made the club feel like we were doing something unique and fresh. Such a boost in the team kept all of us going. When it came to the coordination from the management, I took it like a challenge rather than as an excuse. Anyone on Earth providing with all the resources to do a splendid event, that is not really something notable. What makes a team more special and stronger are the hurdles we pass, and the challenges we accept. Hence The Compendium has become what we are today!<br /><br />

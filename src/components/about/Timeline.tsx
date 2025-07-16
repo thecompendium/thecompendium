@@ -113,7 +113,7 @@ const Timeline: React.FC<TimelineProps> = ({ onYearChange, teamMembers }) => {
                         onClick={() => window.location.href = `/timeline/${selectedEvent.year}`}
                         className="text-[13px] text-yellow-400 hover:text-yellow-300 underline"
                       >
-                        View more
+                        View Full Journey
                       </button>
                     </div>
                   </div>
