@@ -57,30 +57,29 @@ const TimelineYear = () => {
   const event = timelineEvents.find(e => e.year === year);
   const team = teamMembersByYear[year] || [];
 
-  const gallery2023Images = Object.values(import.meta.glob('/public/gallery/years/2023/*', { eager: true, as: 'url' }));
+  // Update for Vite: use new import.meta.glob syntax and correct asset paths
+  const gallery2023Images = Object.values(import.meta.glob('/gallery/years/2023/*?url', { eager: true, import: 'default' }));
 
   // Dynamically load images for the year (works for 2019 and future years)
   useEffect(() => {
     let images = [];
     if (year === '2019') {
       images = [
-        '/gallery/years/2019/img1.jpg',
-        '/gallery/years/2019/img2.jpg',
-        '/gallery/years/2019/img3.jpg',
-        '/gallery/years/2019/img4.jpg',
-        '/gallery/years/2019/img5.jpg',
-        '/gallery/years/2019/img6.jpg',
-        '/gallery/years/2019/img7.jpg',
-        '/gallery/years/2019/img8.jpg',
-        '/gallery/years/2019/img9.jpg',
-        '/gallery/years/2019/img10.jpg',
-        '/gallery/years/2019/img11.jpg',
-        '/gallery/years/2019/img12.jpg',
-        '/gallery/years/2019/img13.jpg',
-        '/gallery/years/2019/img14.jpg',
-        '/gallery/years/2019/img15.jpg',
-        '/gallery/years/2019/img16.jpg',
-        '/gallery/years/2019/img17.jpg',
+        '/gallery/years/2019/imgi_2_img_7537.jpg',
+        '/gallery/years/2019/imgi_3_img_5896.jpg',
+        '/gallery/years/2019/imgi_4_img_5916.jpg',
+        '/gallery/years/2019/imgi_5_img_6038.jpg',
+        '/gallery/years/2019/imgi_6_img_6186.jpg',
+        '/gallery/years/2019/imgi_8_img_7547.jpg',
+        '/gallery/years/2019/imgi_9_img_5913.jpg',
+        '/gallery/years/2019/imgi_10_img_6108.jpg',
+        '/gallery/years/2019/imgi_11_img_6347.jpg',
+        '/gallery/years/2019/imgi_12_img_6363.jpg',
+        '/gallery/years/2019/imgi_13_img_6397.jpg',
+        '/gallery/years/2019/imgi_14_img_6398.jpg',
+        '/gallery/years/2019/imgi_15_img_6402.jpg',
+        '/gallery/years/2019/imgi_16_img_7369.jpg',
+        '/gallery/years/2019/imgi_17_img_7496.jpg',
       ];
     } else if (year === '2024') {
       images = [

@@ -6,6 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import { openPdfViewer } from '@/utils/pdfUtils';
 import { cn } from '@/lib/utils';
 
+export const upcomingEvents = [
+  {
+    title: "The Compendium Live",
+    date: "July 19,2025",
+    time: "2:00 PM to 4:00 PM",
+    location: "AV Center",
+    description: "Unveiling our digital presence — explore the official launch of our brand-new website!",
+    image: "/events images/The Compendium Live.png",
+    category: "Conference",
+    detailsPdf: "/pdfs/events/Website Launch.pdf"
+  }
+];
+
 const Events = () => {
   const navigate = useNavigate();
   
@@ -21,9 +34,9 @@ const Events = () => {
       time: "2:00 PM to 4:00 PM",
       location: "Sangeeth Auditorium",
       description: "A unique legal simulation event that challenges participants to navigate complex legal scenarios and develop critical thinking skills.",
-      image: "https://images.stockcake.com/public/5/0/3/503f3504-5e3e-4248-9eba-fe0ac03133f7_large/courtroom-in-session-stockcake.jpg",
+      image: "/events images/STATE VS A  NOBODY.png",
       category: "Session",
-      detailsPdf: "/public/pdfs/events/State vs A Nobody.pdf"
+      detailsPdf: "/pdfs/events/State vs A Nobody.pdf"
     },
     {
       title: "Courtroom Conundrum",
@@ -31,9 +44,9 @@ const Events = () => {
       time: "2:00 PM to 4:00 PM",
       location: "R&D Block 4th Floor",
       description: "Experience the thrill of legal drama in this immersive mock court session. Witness compelling arguments and strategic thinking in action.",
-      image: "https://images.fastcompany.com/image/upload/f_webp,c_fit,w_1920,q_auto/wp-cms/uploads/2023/10/p-1-90970286-courtroom-design.jpg",
+      image: "/events images/Courtroom  Conundrum.png",
       category: "Competition",
-      detailsPdf: "/public/pdfs/events/Courtroom  Conundrum.pdf"
+      detailsPdf: "/pdfs/events/Courtroom  Conundrum.pdf"
     },
     {
       title: "Vibe Coding",
@@ -41,9 +54,9 @@ const Events = () => {
       time: "2:00 PM - 4:00 PM",
       location: "TIIC Center",
       description: "Join us for an exciting coding session where creativity meets technology. Experience the perfect blend of coding and innovation.",
-      image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop",
+      image: "/events images/Vibe Coding .png",
       category: "Workshop",
-      detailsPdf: "/public/pdfs/events/Vibe Coding .pdf"
+      detailsPdf: "/pdfs/events/Vibe Coding .pdf"
     },
     {
       title: "QUIZ : Battle Of The Brains",
@@ -51,9 +64,9 @@ const Events = () => {
       time: "1:30 PM - 4:00 PM",
       location: "TIIC Center",
       description: "An exciting quiz competition to test your knowledge across various topics and compete for amazing prizes.",
-      image: "https://canopylab.io/wp-content/uploads/2023/01/Blog-Creating-multiple-choice-quizzes-with-the-CanopyLAB-Quiz-engine.jpg",
+      image: "/events images/Quiz Battle of the Brains.png",
       category: "Competition",
-      detailsPdf: "/public/pdfs/events/Quiz Battle of the Brains.pdf"
+      detailsPdf: "/pdfs/events/Quiz Battle of the Brains.pdf"
     },
     {
       title: "Club Connect : Introducing New Joiners & Future Plans",
@@ -61,9 +74,9 @@ const Events = () => {
       time: "1:30 PM - 4:00 PM",
       location: "AV Center",
       description: "A welcoming event to introduce new members and discuss upcoming initiatives and plans for the club's future.",
-      image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop",
+      image: "/events images/The Compendium Club Connect.png",
       category: "Conference",
-      detailsPdf: "/public/pdfs/events/The Compendium Club Connect.pdf"
+      detailsPdf: "/pdfs/events/The Compendium Club Connect.pdf"
     },
     {
       title: "Design For Everyone Workshop",
@@ -71,22 +84,9 @@ const Events = () => {
       time: "1:30 PM - 4:00 PM",
       location: "TIIC Center",
       description: "An interactive workshop exploring design principles and practices for all skill levels, focusing on accessibility and user experience.",
-      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop",
+      image: "/events images/Design for Everyone Workshop.png",
       category: "Workshop",
-      detailsPdf: "/public/pdfs/events/Design for Everyone Workshop.pdf"
-    }
-  ];
-
-  const upcomingEvents = [
-    {
-      title: "The Compendium Live",
-      date: "July 19,2025",
-      time: "2:00 PM to 4:00 PM",
-      location: "AV Center",
-      description: "Unveiling our digital presence — explore the official launch of our brand-new website!",
-      image: "https://i.pinimg.com/736x/74/77/1b/74771bc4f8c628c2a5a50e5b06704465.jpg",
-      category: "Conference",
-      detailsPdf: "/public/pdfs/events/Website Launch.pdf"
+      detailsPdf: "/pdfs/events/Design for Everyone Workshop.pdf"
     }
   ];
 

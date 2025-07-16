@@ -101,35 +101,35 @@ const Timeline: React.FC<TimelineProps> = ({ onYearChange, teamMembers }) => {
                       )}
                     </div>
                     
-                    <button 
-                      onClick={() => setIsExpanded(!isExpanded)}
-                      className="text-[13px] text-yellow-400 hover:text-yellow-300 underline mt-4"
-                    >
-                      {isExpanded ? 'Show less' : 'Show more'}
-                    </button>
-                    {isExpanded && (
+                    {/* Buttons Row: Show more (left), View more (right) */}
+                    <div className="flex justify-between items-center mt-4">
+                      <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-[13px] text-yellow-400 hover:text-yellow-300 underline"
+                      >
+                        {isExpanded ? 'Show less' : 'Show more'}
+                      </button>
                       <button 
                         onClick={() => window.location.href = `/timeline/${selectedEvent.year}`}
-                        className="text-[13px] text-yellow-400 hover:text-yellow-300 underline mt-2"
+                        className="text-[13px] text-yellow-400 hover:text-yellow-300 underline"
                       >
-                        Know More
+                        View more
                       </button>
-                    )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Timeline Bar - Moved below description */}
+                {/* Timeline Bar - Improved gradient and visibility */}
                 <div className="relative h-[60px] flex items-center">
-                  {/* Timeline Line with Gradient */}
-                  <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-white/10 dark:via-white/30 dark:to-white/10" />
-                  
+                  {/* Timeline Line with Blue Gradient */}
+                  <div className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-blue-700 via-blue-400 to-blue-700 opacity-80" />
                   {/* Timeline Points */}
                   <div className="relative flex justify-between items-center w-full px-4">
                     {milestones.map((event, index) => (
                       <div
                         key={event.year}
                         className={`relative cursor-pointer group transition-all duration-500 ${
-                          selectedEvent.year !== event.year ? 'opacity-50 blur-[1px]' : ''
+                          selectedEvent.year !== event.year ? 'opacity-70 blur-0' : ''
                         }`}
                         onClick={() => handleEventClick(event)}
                         style={{ minWidth: '50px', textAlign: 'center' }}
@@ -137,28 +137,27 @@ const Timeline: React.FC<TimelineProps> = ({ onYearChange, teamMembers }) => {
                         {/* Year Label */}
                         <div 
                           className={`absolute -top-8 left-1/2 transform -translate-x-1/2
-                            text-[14px] font-medium whitespace-nowrap transition-all duration-500 
+                            text-[18px] font-bold whitespace-nowrap transition-all duration-500 
                             ${selectedEvent.year === event.year 
-                              ? 'text-yellow-400 scale-110' 
-                              : 'text-gray-500 dark:text-white/60 group-hover:text-gray-700 dark:group-hover:text-white/90'
+                              ? 'text-yellow-400 drop-shadow-[0_0_4px_rgba(255,214,0,0.5)] scale-125' 
+                              : 'text-blue-200 group-hover:text-yellow-200'
                             }`}
                           style={{ minWidth: '50px' }}
                         >
                           {event.year}
                         </div>
-
                         {/* Diamond Shape */}
                         <div className="relative">
                           <div 
-                            className={`relative w-[10px] h-[10px] mx-auto transition-all duration-500
+                            className={`relative w-[16px] h-[16px] mx-auto transition-all duration-500
                               transform rotate-45 group-hover:scale-110 ${
                               selectedEvent.year === event.year 
-                                ? 'bg-yellow-400 scale-110' 
-                                : 'border-2 border-gray-400 dark:border-white/50 group-hover:border-gray-600 dark:group-hover:border-white'
+                                ? 'bg-yellow-400 drop-shadow-[0_0_6px_rgba(255,214,0,0.4)] scale-125' 
+                                : 'border-2 border-blue-300 group-hover:border-yellow-200'
                             }`}
                             style={{
                               boxShadow: selectedEvent.year === event.year 
-                                ? '0 0 10px rgba(255, 214, 0, 0.5)' 
+                                ? '0 0 6px rgba(255, 214, 0, 0.4)' 
                                 : 'none'
                             }}
                           />

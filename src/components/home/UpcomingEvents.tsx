@@ -2,20 +2,7 @@ import React from 'react';
 import { Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { openPdfViewer } from '@/utils/pdfUtils';
-
-// Sample events data
-const events = [
-  {
-    id: 1,
-    title: "Website Launch",
-    description: "Unveiling our digital presence — explore the official launch of our brand-new website!",
-    date: "02/05/2025",
-    time: "2:00 PM to 3:00 PM",
-    location: "AV Center",
-    registrationLink: "https://forms.gle/8MJADTffqvJe6b9QA",
-    detailsPdf: "/public/pdfs/events/Website-Launch.pdf"
-  }
-];
+import { upcomingEvents } from '@/pages/Events';
 
 const UpcomingEvents = () => {
   const navigate = useNavigate();
@@ -32,62 +19,30 @@ const UpcomingEvents = () => {
             Join us for workshops, launches, and special events to enhance your writing and publishing skills.
           </p>
         </div>
-
-        <div className="space-y-6">
-          {events.map((event) => (
-            <div 
-              key={event.id}
-              className="group bg-card rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 hover-lift"
-            >
-              <div className="flex flex-col md:flex-row">
-                <div className="md:w-1/4 bg-gray-100 dark:bg-gray-800 p-6 flex flex-col justify-center items-center text-center">
-                  <Calendar className="h-8 w-8 mb-3 text-theme-blue dark:text-white" />
-                  <h3 className="font-serif text-xl font-medium mb-1 text-gray-900 dark:text-white">{event.date}</h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{event.time}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {upcomingEvents.map((event, index) => (
+            <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
+              <div className="h-40 overflow-hidden relative">
+                <img 
+                  src={event.image} 
+                  alt={event.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
+                  {event.category}
                 </div>
-                
-                <div className="md:w-3/4 p-6 md:p-8">
-                  <h3 className="font-serif text-2xl font-medium mb-3 text-gray-900 dark:text-white group-hover:text-theme-blue dark:group-hover:text-theme-yellow transition-colors">
-                    {event.title}
-                  </h3>
-                  
-                  <p className="text-gray-700 dark:text-gray-300 mb-6">
-                    {event.description}
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center text-sm text-gray-700 dark:text-gray-300 gap-4 mb-6">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-2 text-theme-blue dark:text-white" />
-                      <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-theme-blue dark:text-white" />
-                      <span>{event.location}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    {event.title === "Website Launch" ? (
-                      <button 
-                        onClick={() => alert("Registration will be available soon!")}
-                        className="inline-flex items-center justify-center px-4 py-2 bg-theme-blue text-white rounded-md hover:bg-theme-blue/90 transition-colors text-sm font-medium"
-                      >
-                        Register Now
-                        <ExternalLink className="ml-2 h-3 w-3" />
-                      </button>
-                    ) : (
-                      <a 
-                        href={event.registrationLink}
-                        className="inline-flex items-center justify-center px-4 py-2 bg-theme-blue text-white rounded-md hover:bg-theme-blue/90 transition-colors text-sm font-medium"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Register Now
-                        <ExternalLink className="ml-2 h-3 w-3" />
-                      </a>
-                    )}
-                  </div>
-                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-bold mb-2">{event.title}</h3>
+                <p className="text-sm text-muted-foreground mb-2">{event.date} | {event.time}</p>
+                <p className="text-sm text-muted-foreground mb-4">{event.location}</p>
+                <p className="text-sm mb-4">{event.description}</p>
+                <button 
+                  onClick={() => openPdfViewer(navigate, event.detailsPdf)}
+                  className="inline-flex items-center text-theme-blue hover:text-theme-blue/80 dark:text-white dark:hover:text-white/80 text-sm font-medium transition-colors"
+                >
+                  View Details
+                </button>
               </div>
             </div>
           ))}
