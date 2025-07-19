@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "title": "Say Goodbye to GenAI and Hello to Agentic AI",
+    "publisher": "M Prashanth",
+    "description": "Say goodbye to traditional GenAI—Agentic AI ushers in a new era of autonomous, goal-driven intelligence.",
+    "image": "https://i.pinimg.com/736x/f6/00/79/f60079de2a667c0f57bdeee434046521.jpg",
+    "pdfUrl": "/public/pdfs/articles/Say-Goodbye-to-GenAI-and-Hello-to-Agentic-AI.pdf",
+    "date": "2025-05-01",
+    "category": "Articles"
+  },
+  {
+    "id": 2,
+    "title": "Annual Magazine 2023-2024",
+    "publisher": "The Compendium Team",
+    "description": "The latest edition of our annual magazine highlighting student achievements, events, and creative works.",
+    "image": "/public/pdfs/annualmagazine/Annual Magazine_2023-2024.pdf",
+    "pdfUrl": "/public/pdfs/annualmagazine/Annual Magazine_2023-2024.pdf",
+    "date": "2024-04-15",
+    "category": "Magazine"
+  },
+  {
+    "id": 3,
+    "title": "AI for Aeronautical Engineers",
+    "publisher": "Charan Yelimela",
+    "description": "An in-depth article on the impact of artificial intelligence in the field of aeronautical engineering.",
+    "image": "https://www.svgrepo.com/show/276264/ai-artificial-intelligence.svg",
+    "pdfUrl": "/public/pdfs/articles/ai-aeronautical-engineers.pdf",
+    "date": "2024-03-10",
+    "category": "Articles"
+  },
+  {
+    "id": 4,
+    "title": "College News Edition 12",
+    "publisher": "The Compendium News Team",
+    "description": "Monthly roundup of campus news, events, and student highlights for Edition 12.",
+    "image": "/public/pdfs/collegenews/news_edition_12.pdf",
+    "pdfUrl": "/public/pdfs/collegenews/news_edition_12.pdf",
+    "date": "2024-06-01",
+    "category": "News"
+  },
+  {
+    "id": 5,
+    "title": "Claude AI: The Next Generation Chatbot",
+    "publisher": "Sai Kushal",
+    "description": "A review and technical overview of Claude AI, the latest conversational AI model.",
+    "image": "https://www.svgrepo.com/show/276264/ai-artificial-intelligence.svg",
+    "pdfUrl": "/public/pdfs/articles/claude-ai.pdf",
+    "date": "2024-05-20",
+    "category": "Articles"
+  },
+  {
+    "id": 6,
+    "title": "DeepSeek AI: Unlocking New Potentials",
+    "publisher": "Chakri Shabad",
+    "description": "Exploring the capabilities and applications of DeepSeek AI in modern research.",
+    "image": "https://www.svgrepo.com/show/276264/ai-artificial-intelligence.svg",
+    "pdfUrl": "/public/pdfs/articles/deepseek-ai.pdf",
+    "date": "2024-05-10",
+    "category": "Articles"
+  },
+  {
+    "id": 7,
+    "title": "College News Edition 11",
+    "publisher": "The Compendium News Team",
+    "description": "Monthly roundup of campus news, events, and student highlights for Edition 11.",
+    "image": "/public/pdfs/collegenews/news_edition_11.pdf",
+    "pdfUrl": "/public/pdfs/collegenews/news_edition_11.pdf",
+    "date": "2024-05-01",
+    "category": "News"
+  }
+] 

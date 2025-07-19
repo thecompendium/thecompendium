@@ -27,6 +27,7 @@ import Chess from './pages/games/MiniChess';
 import Game2048 from './pages/games/Game2048';
 import MemoryMatch from './pages/games/MemoryMatch';
 import Snake from './pages/games/Snake';
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </TooltipProvider>
   </QueryClientProvider>
 );

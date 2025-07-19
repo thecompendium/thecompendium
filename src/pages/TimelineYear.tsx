@@ -141,7 +141,21 @@ const TimelineYear = () => {
         '/gallery/years/2022/WhatsApp Image 2025-06-26 at 11.13.38_73e42e0b.jpg',
       ];
     } else if (year === '2023') {
-      images = gallery2023Images;
+      images = [
+        '/gallery/years/2023/IMG_4841.jpg',
+        '/gallery/years/2023/IMG-20240501-WA0017.jpg',
+        '/gallery/years/2023/Screenshot 2025-07-03 202559.png',
+        '/gallery/years/2023/Screenshot 2025-07-03 202645.png',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.23_f84b69de.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.24_9cbcbe86.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.24_d54432b0.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.26_53517f95.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.26_622cdfa6.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-03 at 22.18.27_c9150c9c.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-07 at 13.20.34_7b1a2999.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-07 at 15.21.14_315966fa.jpg',
+        '/gallery/years/2023/WhatsApp Image 2025-07-07 at 15.22.31_772c9d62.jpg',
+      ];
     } else {
       images = Array.from({ length: 20 }, (_, i) => `/gallery/years/${year}/img${i + 1}.jpg`);
     }
