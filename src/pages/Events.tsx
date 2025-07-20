@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Calendar, Clock, MapPin, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { openPdfViewer } from '@/utils/pdfUtils';
 import { cn } from '@/lib/utils';
+import { 
+  getUpcomingEvents, 
+  getConductedEvents, 
+  sortUpcomingEvents, 
+  sortConductedEvents,
+  type Event 
+} from '@/utils/eventUtils';
 
-export const upcomingEvents = [
-  {
-    title: "The Compendium Live",
-    date: "July 19,2025",
-    time: "2:00 PM to 4:00 PM",
-    location: "AV Center",
-    description: "Unveiling our digital presence — explore the official launch of our brand-new website!",
-    image: "/events images/The Compendium Live.png",
-    category: "Conference",
-    detailsPdf: "/pdfs/events/Website Launch.pdf"
-  }
-];
+// Export upcoming events for use in other components
+export const upcomingEvents = getUpcomingEvents();
 
 const Events = () => {
   const navigate = useNavigate();
@@ -27,68 +24,9 @@ const Events = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const conductedEvents = [
-    {
-      title: "State vs A Nobody",
-      date: "May 26, 2025",
-      time: "2:00 PM to 4:00 PM",
-      location: "Sangeeth Auditorium",
-      description: "A unique legal simulation event that challenges participants to navigate complex legal scenarios and develop critical thinking skills.",
-      image: "/events images/STATE VS A NOBODY.png",
-      category: "Session",
-      detailsPdf: "/pdfs/events/State vs A Nobody.pdf"
-    },
-    {
-      title: "Courtroom Conundrum",
-      date: "April 11 to 12, 2025",
-      time: "2:00 PM to 4:00 PM",
-      location: "R&D Block 4th Floor",
-      description: "Experience the thrill of legal drama in this immersive mock court session. Witness compelling arguments and strategic thinking in action.",
-      image: "/events images/Courtroom  Conundrum.png",
-      category: "Competition",
-      detailsPdf: "/pdfs/events/Courtroom  Conundrum.pdf"
-    },
-    {
-      title: "Vibe Coding",
-      date: "March 29, 2025",
-      time: "2:00 PM - 4:00 PM",
-      location: "TIIC Center",
-      description: "Join us for an exciting coding session where creativity meets technology. Experience the perfect blend of coding and innovation.",
-      image: "/events images/Vibe Coding .png",
-      category: "Workshop",
-      detailsPdf: "/pdfs/events/Vibe Coding .pdf"
-    },
-    {
-      title: "QUIZ : Battle Of The Brains",
-      date: "February 15, 2025",
-      time: "1:30 PM - 4:00 PM",
-      location: "TIIC Center",
-      description: "An exciting quiz competition to test your knowledge across various topics and compete for amazing prizes.",
-      image: "/events images/Quiz Battle of the Brains.png",
-      category: "Competition",
-      detailsPdf: "/pdfs/events/Quiz Battle of the Brains.pdf"
-    },
-    {
-      title: "Club Connect : Introducing New Joiners & Future Plans",
-      date: "February 8, 2025",
-      time: "1:30 PM - 4:00 PM",
-      location: "AV Center",
-      description: "A welcoming event to introduce new members and discuss upcoming initiatives and plans for the club's future.",
-      image: "/events images/The Compendium Club Connect.png",
-      category: "Conference",
-      detailsPdf: "/pdfs/events/The Compendium Club Connect.pdf"
-    },
-    {
-      title: "Design For Everyone Workshop",
-      date: "Dec 7, 2024",
-      time: "1:30 PM - 4:00 PM",
-      location: "TIIC Center",
-      description: "An interactive workshop exploring design principles and practices for all skill levels, focusing on accessibility and user experience.",
-      image: "/events images/Design for Everyone Workshop.png",
-      category: "Workshop",
-      detailsPdf: "/pdfs/events/Design for Everyone Workshop.pdf"
-    }
-  ];
+  // Get dynamic events based on current date
+  const upcomingEventsList = useMemo(() => sortUpcomingEvents(getUpcomingEvents()), []);
+  const conductedEventsList = useMemo(() => sortConductedEvents(getConductedEvents()), []);
 
   const EventPdfButton = ({ pdfUrl, className = "" }) => (
     <button 
@@ -138,41 +76,49 @@ const Events = () => {
             <h2 className="text-3xl font-serif font-bold mb-12 text-theme-blue dark:text-white">Conducted Events</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {conductedEvents.map((event, index) => (
-                <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
-                  <div className="h-40 overflow-hidden relative">
-                    <img 
-                      src={event.image} 
-                      alt={event.title} 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
-                      {event.category}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-serif font-bold text-theme-blue dark:text-white mb-2 group-hover:text-theme-blue dark:group-hover:text-theme-yellow transition-colors line-clamp-2">{event.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm line-clamp-2">{event.description}</p>
-                    
-                    <div className="space-y-1.5 mb-4">
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <Calendar className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.date}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <Clock className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <MapPin className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.location}</span>
+              {conductedEventsList.length > 0 ? (
+                conductedEventsList.map((event, index) => (
+                  <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
+                    <div className="h-40 overflow-hidden relative">
+                      <img 
+                        src={event.image} 
+                        alt={event.title} 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
+                        {event.category}
                       </div>
                     </div>
-                    
-                    <EventPdfButton pdfUrl={event.detailsPdf} />
+                    <div className="p-4">
+                      <h3 className="text-lg font-serif font-bold text-theme-blue dark:text-white mb-2 group-hover:text-theme-blue dark:group-hover:text-theme-yellow transition-colors line-clamp-2">{event.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm line-clamp-2">{event.description}</p>
+                      
+                      <div className="space-y-1.5 mb-4">
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <Calendar className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.date}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <Clock className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <MapPin className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+                      
+                      <EventPdfButton pdfUrl={event.detailsPdf} />
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Conducted Events</h3>
+                  <p className="text-gray-500 dark:text-gray-400">No events have been conducted yet.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </section>
@@ -183,41 +129,49 @@ const Events = () => {
             <h2 className="text-3xl font-serif font-bold mb-12 text-theme-blue dark:text-white">Upcoming Events</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {upcomingEvents.map((event, index) => (
-                <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
-                  <div className="h-40 overflow-hidden relative">
-                    <img 
-                      src={event.image} 
-                      alt={event.title} 
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
-                      {event.category}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-serif font-bold text-theme-blue dark:text-white mb-2 group-hover:text-theme-blue dark:group-hover:text-theme-yellow transition-colors line-clamp-2">{event.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm line-clamp-2">{event.description}</p>
-                    
-                    <div className="space-y-1.5 mb-4">
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <Calendar className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.date}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <Clock className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
-                        <MapPin className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
-                        <span>{event.location}</span>
+              {upcomingEventsList.length > 0 ? (
+                upcomingEventsList.map((event, index) => (
+                  <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
+                    <div className="h-40 overflow-hidden relative">
+                      <img 
+                        src={event.image} 
+                        alt={event.title} 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
+                        {event.category}
                       </div>
                     </div>
-                    
-                    <RegisterButton eventTitle={event.title} />
+                    <div className="p-4">
+                      <h3 className="text-lg font-serif font-bold text-theme-blue dark:text-white mb-2 group-hover:text-theme-blue dark:group-hover:text-theme-yellow transition-colors line-clamp-2">{event.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm line-clamp-2">{event.description}</p>
+                      
+                      <div className="space-y-1.5 mb-4">
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <Calendar className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.date}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <Clock className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600 dark:text-gray-400 text-sm">
+                          <MapPin className="h-3.5 w-3.5 mr-1.5 text-theme-blue dark:text-gray-400" />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+                      
+                      <RegisterButton eventTitle={event.title} />
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Upcoming Events</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Check back soon for new events and workshops!</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </section>

@@ -624,7 +624,7 @@ const Admin = () => {
 
   const adminStats = [
     { title: 'Total Publications', value: '24', icon: FileText, color: 'text-blue-600' },
-    { title: 'Upcoming Events', value: '3', icon: Calendar, color: 'text-green-600' },
+    { title: 'Upcoming Events', value: upcomingEventsList.length.toString(), icon: Calendar, color: 'text-green-600' },
     { title: 'Team Members', value: '12', icon: Users, color: 'text-purple-600' },
     { title: 'Achievements', value: '8', icon: Award, color: 'text-yellow-600' },
   ];
@@ -641,10 +641,21 @@ const Admin = () => {
     { title: 'Photography Contest', date: '2024-02-25', attendees: 28, status: 'Confirmed' },
   ];
 
-  // Helper to split events by date
-  const today = new Date();
-  const upcomingEventsList = events.filter(e => new Date(e.date) >= today);
-  const conductedEventsList = events.filter(e => new Date(e.date) < today);
+  // Helper to split events by date using our utility functions
+  const upcomingEventsList = events.filter(e => {
+    const eventDate = new Date(e.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today;
+  });
+  const conductedEventsList = events.filter(e => {
+    const eventDate = new Date(e.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate < today;
+  });
 
   // --- Domain Heads CRUD logic ---
   const handleDomainHeadSubmit = async (e) => {
@@ -811,17 +822,23 @@ const Admin = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {upcomingEvents.map((event, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="font-medium text-sm">{event.title}</p>
-                          <p className="text-xs text-gray-600">{event.date} • {event.attendees} attendees</p>
+                    {upcomingEventsList.length > 0 ? (
+                      upcomingEventsList.slice(0, 3).map((event, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div>
+                            <p className="font-medium text-sm">{event.title}</p>
+                            <p className="text-xs text-gray-600">{event.date} • {event.location}</p>
+                          </div>
+                          <Badge variant="default">
+                            Upcoming
+                          </Badge>
                         </div>
-                        <Badge variant={event.status === 'Confirmed' ? 'default' : 'secondary'}>
-                          {event.status}
-                        </Badge>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        No upcoming events
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>

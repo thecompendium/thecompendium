@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { openPdfViewer } from '@/utils/pdfUtils';
-import { upcomingEvents } from '@/pages/Events';
+import { getUpcomingEvents, sortUpcomingEvents } from '@/utils/eventUtils';
 
 const UpcomingEvents = () => {
   const navigate = useNavigate();
+
+  // Get dynamic upcoming events based on current date
+  const upcomingEvents = useMemo(() => sortUpcomingEvents(getUpcomingEvents()), []);
 
   return (
     <section className="py-20 bg-yellow-50 dark:bg-gray-900">
@@ -20,32 +23,40 @@ const UpcomingEvents = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {upcomingEvents.map((event, index) => (
-            <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
-              <div className="h-40 overflow-hidden relative">
-                <img 
-                  src={event.image} 
-                  alt={event.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
-                  {event.category}
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event, index) => (
+              <div key={index} className="group bg-white hover:bg-gray-50 dark:bg-[#020817] dark:hover:bg-[#020817]/90 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-800">
+                <div className="h-40 overflow-hidden relative">
+                  <img 
+                    src={event.image} 
+                    alt={event.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-3 right-3 bg-theme-yellow text-theme-blue px-2 py-0.5 rounded-full text-xs font-medium">
+                    {event.category}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold mb-2">{event.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">{event.date} | {event.time}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{event.location}</p>
+                  <p className="text-sm mb-4">{event.description}</p>
+                  <button 
+                    onClick={() => openPdfViewer(navigate, event.detailsPdf)}
+                    className="inline-flex items-center text-theme-blue hover:text-theme-blue/80 dark:text-white dark:hover:text-white/80 text-sm font-medium transition-colors"
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2">{event.title}</h3>
-                <p className="text-sm text-muted-foreground mb-2">{event.date} | {event.time}</p>
-                <p className="text-sm text-muted-foreground mb-4">{event.location}</p>
-                <p className="text-sm mb-4">{event.description}</p>
-                <button 
-                  onClick={() => openPdfViewer(navigate, event.detailsPdf)}
-                  className="inline-flex items-center text-theme-blue hover:text-theme-blue/80 dark:text-white dark:hover:text-white/80 text-sm font-medium transition-colors"
-                >
-                  View Details
-                </button>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Upcoming Events</h3>
+              <p className="text-gray-500 dark:text-gray-400">Check back soon for new events and workshops!</p>
             </div>
-          ))}
+          )}
         </div>
         
         <div className="mt-12 text-center">

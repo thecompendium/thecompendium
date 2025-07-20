@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Calendar, X } from 'lucide-react';
 
 interface Achievement {
   name: string;
@@ -56,8 +56,55 @@ const achievements: Achievement[] = [
 ];
 
 const Achievements = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isApplicationPeriod, setIsApplicationPeriod] = useState(false);
+
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Check if current date is within application period
+    const checkSubmissionPeriod = () => {
+      // Allow submissions year-round (all months)
+      setIsApplicationPeriod(true);
+    };
+
+    checkSubmissionPeriod();
+  }, []);
+
+  // Get the next allowed submission month (always available now)
+  const getNextAllowedMonth = () => {
+    return 'Now'; // Applications are always open
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      // Add current date and time to form data
+      const currentDate = new Date().toLocaleString('en-US', {
+        dateStyle: 'full',
+        timeStyle: 'long',
+        timeZone: 'Asia/Kolkata' // Indian timezone
+      });
+      
+      // Add date to the form before submission
+      const form = e.target as HTMLFormElement;
+      const dateInput = document.createElement('input');
+      dateInput.type = 'hidden';
+      dateInput.name = 'Submission Date';
+      dateInput.value = currentDate;
+      form.appendChild(dateInput);
+      
+      form.submit();
+      setIsFormOpen(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-theme-blue">
@@ -123,74 +170,165 @@ const Achievements = () => {
                 </div>
               ))}
             </div>
-            {/* Share Your Achievement Section */}
+
+            {/* Share Your Achievement CTA */}
             <div className="text-center mt-20">
               <h2 className="text-3xl md:text-4xl font-bold text-theme-blue dark:text-white mb-4">
-                Share Your Talent & Achievements
+                Share Your Achievement
               </h2>
               <p className="text-gray-700 dark:text-white/80 max-w-2xl mx-auto mb-8">
-                Are you a student with a talent or accomplishment to share? We want to celebrate your success and feature your story.
+                Have a talent, accomplishment, or creative work to showcase? Submit your achievement and get featured on our page alongside other talented students.
               </p>
-              <button 
-                className="px-6 py-3 bg-yellow-400 text-theme-blue font-semibold rounded-md hover:bg-yellow-300 transition-colors shadow"
-                onClick={() => setShowForm(true)}
-              >
-                Submit Your Achievement
-              </button>
-            </div>
-            {/* Modal Form */}
-            {showForm && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                <div className="bg-white dark:bg-theme-blue rounded-lg p-8 w-full max-w-lg shadow-2xl relative">
+              <div className="mt-8">
+                {isApplicationPeriod ? (
                   <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-2xl font-bold"
-                    onClick={() => { setShowForm(false); setFormSubmitted(false); }}
-                    aria-label="Close"
+                    onClick={() => setIsFormOpen(true)}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-theme-yellow text-theme-blue font-bold rounded-md hover:bg-theme-yellow/90 transition-colors"
                   >
-                    &times;
+                    Submit Achievement
                   </button>
-                  <h3 className="text-2xl font-bold mb-4 text-theme-blue dark:text-yellow-400 text-center">Submit Your Talent or Achievement</h3>
-                  {formSubmitted ? (
-                    <div className="text-center text-lg text-green-600 dark:text-green-400 font-semibold py-8">
-                      Thank you for your submission! We will reach you soon.
-                    </div>
-                  ) : (
-                    <form 
-                      action="https://formsubmit.co/thecompendiumiare@gmail.com"
-                      method="POST"
-                      className="space-y-6"
-                      onSubmit={() => setFormSubmitted(true)}
-                    >
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Name</label>
-                        <input name="name" type="text" className="w-full px-4 py-2 rounded border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-blue-950/60 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-blue dark:focus:ring-yellow-400" required />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Roll No</label>
-                        <input name="rollNo" type="text" className="w-full px-4 py-2 rounded border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-blue-950/60 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-blue dark:focus:ring-yellow-400" required />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Phone Number</label>
-                        <input name="phone" type="tel" pattern="[0-9]{10}" className="w-full px-4 py-2 rounded border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-blue-950/60 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-blue dark:focus:ring-yellow-400" required />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Achievement or Talent</label>
-                        <input name="achievement_or_talent" type="text" className="w-full px-4 py-2 rounded border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-blue-950/60 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-blue dark:focus:ring-yellow-400" required />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-white mb-1">Description</label>
-                        <textarea name="description" className="w-full px-4 py-2 rounded border border-gray-300 dark:border-white/10 bg-gray-100 dark:bg-blue-950/60 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-theme-blue dark:focus:ring-yellow-400 resize-none" rows={4} required></textarea>
-                      </div>
-                      <button type="submit" className="w-full px-6 py-3 bg-yellow-400 text-theme-blue font-semibold rounded-md hover:bg-yellow-300 transition-colors">Submit</button>
-                    </form>
-                  )}
-                </div>
+                ) : (
+                  <div className="inline-flex items-center justify-center px-6 py-3 bg-gray-100 dark:bg-gray-300/20 text-gray-600 dark:text-white font-medium rounded-md gap-2 border border-gray-200 dark:border-white/20">
+                    <Calendar className="h-4 w-4" />
+                    <span>Submissions open in {getNextAllowedMonth()}</span>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </section>
       </main>
       <Footer />
+
+      {/* Application Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-theme-blue rounded-lg w-full max-w-xl relative my-8">
+            <button 
+              onClick={() => setIsFormOpen(false)}
+              className="absolute right-3 top-3 text-theme-blue dark:text-white/70 hover:text-theme-blue/70 dark:hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            
+            <div className="p-6 max-h-[90vh] overflow-y-auto">
+              <h3 className="text-xl font-bold text-theme-blue dark:text-white mb-4 sticky top-0 bg-white dark:bg-theme-blue pt-2">Submit Your Achievement</h3>
+              
+              <form 
+                action="https://formsubmit.co/thecompendiumiare@gmail.com" 
+                method="POST" 
+                className="space-y-4"
+                onSubmit={handleFormSubmit}
+              >
+                <div>
+                  <label htmlFor="name" className="block text-sm text-theme-blue dark:text-white mb-1">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                    placeholder="Your full name"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="year" className="block text-sm text-theme-blue dark:text-white mb-1">Year</label>
+                  <select
+                    id="year"
+                    name="year"
+                    required
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                  >
+                    <option value="" className="text-theme-blue dark:text-white">Select your year</option>
+                    <option value="1st Year" className="text-theme-blue dark:text-white">1st Year</option>
+                    <option value="2nd Year" className="text-theme-blue dark:text-white">2nd Year</option>
+                    <option value="3rd Year" className="text-theme-blue dark:text-white">3rd Year</option>
+                    <option value="4th Year" className="text-theme-blue dark:text-white">4th Year</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="branch" className="block text-sm text-theme-blue dark:text-white mb-1">Branch</label>
+                  <input
+                    type="text"
+                    id="branch"
+                    name="branch"
+                    required
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                    placeholder="Your branch/department"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm text-theme-blue dark:text-white mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                    placeholder="Your phone number"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm text-theme-blue dark:text-white mb-1">Email ID</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                    placeholder="your@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="achievement_description" className="block text-sm text-theme-blue dark:text-white mb-1">Achievement Description</label>
+                  <textarea
+                    id="achievement_description"
+                    name="achievement_description"
+                    required
+                    rows={4}
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#021496] border border-gray-200 dark:border-white/30 rounded-md focus:outline-none focus:border-theme-blue dark:focus:border-white text-theme-blue dark:text-white text-sm"
+                    placeholder="Describe your achievement, the process, and what makes it special"
+                  ></textarea>
+                </div>
+
+                {/* Hidden FormSubmit.co fields */}
+                <input type="hidden" name="_subject" value="New Achievement Submission!" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_next" value="https://thecompendiumclub.com/achievements" />
+                <input type="hidden" name="_captcha" value="true" />
+
+                <div className="flex gap-3 pt-2 sticky bottom-0 bg-white dark:bg-theme-blue pb-2">
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-theme-yellow text-theme-blue font-medium rounded-md hover:bg-theme-yellow/90 transition-colors text-sm"
+                  >
+                    Submit Achievement
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="px-4 py-2 border border-gray-200 dark:border-white/30 text-theme-blue dark:text-white font-medium rounded-md hover:bg-gray-50 dark:hover:bg-white/10 transition-colors text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Message Popup */}
+      {showSuccess && (
+        <div className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+          Thank you for submitting your achievement! We will review it and feature it on our page soon.
+        </div>
+      )}
     </div>
   );
 };

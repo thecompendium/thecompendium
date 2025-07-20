@@ -218,38 +218,16 @@ const About = () => {
 
     // Check if current date is within application period
     const checkSubmissionPeriod = () => {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11
-      
-      // Allow submissions from March (3) to July (7)
-      const startMonth = 3; // March
-      const endMonth = 7;   // July
-      
-      setIsApplicationPeriod(currentMonth >= startMonth && currentMonth <= endMonth);
+      // Allow submissions year-round (all months)
+      setIsApplicationPeriod(true);
     };
 
     checkSubmissionPeriod();
   }, []);
 
-  // Get the next allowed submission month
+  // Get the next allowed submission month (always available now)
   const getNextAllowedMonth = () => {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1;
-    const startMonth = 3; // March
-    const endMonth = 7;   // July
-    
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-
-    if (currentMonth < startMonth) {
-      return monthNames[startMonth - 1]; // Return March if before March
-    } else if (currentMonth > endMonth) {
-      return `${monthNames[startMonth - 1]} ${new Date().getFullYear() + 1}`; // Return next year's March
-    } else {
-      return 'Now'; // We're in the application period
-    }
+    return 'Now'; // Applications are always open
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
