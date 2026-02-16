@@ -56,14 +56,27 @@ const INITIAL_JOURNEY_DATA: JourneyYear[] = [
   }
 ];
 
-const About: React.FC<AboutProps> = ({ isAdmin }) => {
+const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
   const [journeyData, setJourneyData] = useState<JourneyYear[]>([]);
   const [activeYear, setActiveYear] = useState<number>(2024);
   const [showMore, setShowMore] = useState(false);
   const [aboutUsImage, setAboutUsImage] = useState('');
   const [viewMode, setViewMode] = useState<'snapshot' | 'full'>('snapshot');
   
-  // Lightbox & Modal State
+  // Stats Section State (Manual override for members)
+  const [manualStats, setManualStats] = useState({
+    members: '50+'
+  });
+
+  // Dynamic calculations
+  const dynamicStats = useMemo(() => {
+    return {
+      pubs: publications.length.toString(),
+      articles: publications.filter(p => p.category === 'Article').length.toString(),
+      editions: publications.filter(p => p.category === 'College News' || p.category === 'Annual Magazine').length.toString()
+    };
+  }, [publications]);
+
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [showAddLeaderModal, setShowAddLeaderModal] = useState(false);
   const [newLeaderForm, setNewLeaderForm] = useState<Partial<JourneyLeader>>({ name: '', role: '', reflection: '', tagline: '' });
@@ -73,14 +86,14 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [fileMap, setFileMap] = useState<Record<string, File>>({});
-  const [domainIndex, setDomainIndex] = useState(0);
 
   const fetchConfig = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [savedHero, savedJourney] = await Promise.all([
+      const [savedHero, savedJourney, sMembs] = await Promise.all([
         api.config.get('about_us_image_main'),
-        api.config.get('journey_data_v2')
+        api.config.get('journey_data_v2'),
+        api.config.get('stats_members')
       ]);
       if (savedHero) setAboutUsImage(savedHero);
       if (savedJourney && savedJourney !== '[]') {
@@ -88,6 +101,10 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
         setJourneyData(sorted);
         if (sorted.length > 0) setActiveYear(sorted[0].year);
       } else setJourneyData(INITIAL_JOURNEY_DATA);
+      
+      setManualStats({
+        members: sMembs || '50+'
+      });
     } catch (e: any) {
       setJourneyData(INITIAL_JOURNEY_DATA);
     } finally { setIsLoading(false); }
@@ -169,8 +186,11 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
     try {
       const finalAboutImage = await processDeepUploads(aboutUsImage, 'banners');
       const finalJourney = await processDeepUploads(journeyData, 'journey');
-      await api.config.set('about_us_image_main', finalAboutImage);
-      await api.config.set('journey_data_v2', JSON.stringify(finalJourney));
+      await Promise.all([
+        api.config.set('about_us_image_main', finalAboutImage),
+        api.config.set('journey_data_v2', JSON.stringify(finalJourney)),
+        api.config.set('stats_members', manualStats.members)
+      ]);
       setAboutUsImage(finalAboutImage); setJourneyData(finalJourney); setFileMap({}); setHasUnsavedChanges(false);
       alert("✅ CLOUD SYNC SUCCESSFUL.");
     } catch (err: any) { alert("❌ SYNC ERROR: " + err.message); } finally { setIsSyncing(false); }
@@ -236,7 +256,7 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
           </section>
 
           <section className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-16 border-b border-white/5 pb-32">
-            <div className="space-y-8">
+            <div className="space-y-8 text-left">
               <h2 className="text-4xl font-bold serif-font text-white">About Us</h2>
               <div className="space-y-6 text-gray-300 font-light text-lg">
                 <p>Welcome to Compendium IARE, the official news and publication society of IARE.</p>
@@ -252,6 +272,56 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
             </div>
           </section>
 
+          {/* Key Facts / Stats Section */}
+          <section className="py-20 bg-[var(--primary-bg)]">
+            <div className="max-w-7xl mx-auto px-6 text-center">
+              <h2 className="text-4xl font-bold serif-font mb-4">Key Facts</h2>
+              <p className="text-gray-400 mb-12 font-light">A snapshot of our organization and impact</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Dynamic Stat 1: Total Pubs */}
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center aspect-[1.4/1] transition-all hover:border-yellow-400/30 group">
+                  <div className="text-yellow-400 mb-4 group-hover:scale-110 transition-transform">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                  </div>
+                  <span className="text-4xl font-bold text-white mb-2">{dynamicStats.pubs}</span>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center">Publishing student work</p>
+                </div>
+
+                {/* Dynamic Stat 2: Articles */}
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center aspect-[1.4/1] transition-all hover:border-yellow-400/30 group">
+                  <div className="text-yellow-400 mb-4 group-hover:scale-110 transition-transform">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                  </div>
+                  <span className="text-4xl font-bold text-white mb-2">{dynamicStats.articles}</span>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center">Articles published</p>
+                </div>
+
+                {/* Dynamic Stat 3: News Editions */}
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center aspect-[1.4/1] transition-all hover:border-yellow-400/30 group">
+                  <div className="text-yellow-400 mb-4 group-hover:scale-110 transition-transform">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  <span className="text-4xl font-bold text-white mb-2">{dynamicStats.editions}</span>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center">News Editions</p>
+                </div>
+
+                {/* Manual Stat 4: Members */}
+                <div className="bg-black/40 border border-white/10 rounded-2xl p-8 flex flex-col items-center justify-center aspect-[1.4/1] transition-all hover:border-yellow-400/30 group">
+                  <div className="text-yellow-400 mb-4 group-hover:scale-110 transition-transform">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                  </div>
+                  {isAdmin ? (
+                    <input className="bg-transparent text-4xl font-bold text-white text-center w-full focus:outline-none border-b border-white/10 mb-2" value={manualStats.members} onChange={e => { setManualStats({...manualStats, members: e.target.value}); setHasUnsavedChanges(true); }} />
+                  ) : (
+                    <span className="text-4xl font-bold text-white mb-2">{manualStats.members}</span>
+                  )}
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest text-center">Active members</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className="py-32 px-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-between items-center mb-24">
@@ -259,7 +329,7 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
                  <div className="w-24 flex justify-end">{isAdmin && <button onClick={handleAddNewYear} className="px-4 py-2 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest">+ Add Year</button>}</div>
               </div>
               <div className="flex flex-col lg:flex-row gap-20 items-start">
-                <div className="w-full lg:w-1/2">
+                <div className="w-full lg:w-1/2 text-left">
                   <div className="relative group overflow-hidden rounded-3xl aspect-[1.8/1] mb-12 bg-[#211f1e]">
                     <img src={currentYearData.main_image || "https://picsum.photos/seed/milestone/800/450"} className="w-full h-full object-cover" alt="Milestone" />
                     {isAdmin && (
@@ -309,7 +379,7 @@ const About: React.FC<AboutProps> = ({ isAdmin }) => {
                     ))}</div>
                   </div>
                 </div>
-                <div className="w-full lg:w-1/2 space-y-16 lg:pl-10">
+                <div className="w-full lg:w-1/2 space-y-16 lg:pl-10 text-left">
                    {(currentYearData.leaders || []).map((leader) => (
                      <div key={leader.id} className="flex gap-8 items-start group relative">
                         <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-white/10 flex-shrink-0 bg-[#211f1e]">

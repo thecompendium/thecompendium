@@ -121,7 +121,6 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
             const content = message.serverContent;
             if (content && content.modelTurn && content.modelTurn.parts) {
               const audioPart = content.modelTurn.parts.find(p => p.inlineData?.data);
-              // FIX TS2345: Explicitly capture and check if the data exists and is a string
               const audioData = audioPart?.inlineData?.data;
               if (audioData) {
                 const bytes = decodeAudio(audioData);
@@ -277,7 +276,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
       <section className="py-32 px-6 bg-[var(--primary-bg)]">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-            <div>
+            <div className="text-left">
               <span className="text-yellow-500 text-caption font-black uppercase tracking-[0.4em] mb-4 block">Selected Works</span>
               <h2 className="text-h2 text-[var(--text-main)]">Featured Publications</h2>
             </div>
@@ -286,25 +285,25 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {publications.length === 0 ? (
                <div className="col-span-full py-24 text-center text-[var(--text-muted)] border border-dashed border-[var(--border-color)] rounded-[3rem]">
                  <p className="text-body font-bold uppercase tracking-widest">Awaiting new publications...</p>
                </div>
             ) : (
-              publications.slice(0, 3).map((pub) => (
-                <div key={pub.id} className="group glow-card rounded-[2rem] overflow-hidden flex flex-col h-full">
-                  <div className="h-60 overflow-hidden relative">
+              publications.slice(0, 4).map((pub) => (
+                <div key={pub.id} className="group glow-card rounded-[1.5rem] overflow-hidden flex flex-col h-full text-left">
+                  <div className="h-48 overflow-hidden relative">
                     <img src={pub.image_url} alt={pub.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <span className="absolute top-6 left-6 px-4 py-1.5 bg-yellow-400 text-black text-caption font-black rounded-xl uppercase tracking-widest shadow-xl">
+                    <span className="absolute top-4 left-4 px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">
                       {pub.category}
                     </span>
                   </div>
-                  <div className="p-8 flex-grow flex flex-col">
-                    <p className="text-small text-[var(--text-muted)] font-bold uppercase tracking-widest mb-4">{pub.author} • {pub.date}</p>
-                    <h3 className="text-h4 mb-4 text-[var(--text-main)] leading-tight group-hover:text-yellow-500 transition-colors h-[3rem] line-clamp-2">{pub.title}</h3>
-                    <p className="text-body text-[var(--text-muted)] mb-8 line-clamp-3 text-small flex-grow">{pub.summary}</p>
-                    <button onClick={() => onNavigate(Page.News)} className="text-small font-black text-blue-500 hover:text-yellow-500 uppercase tracking-widest transition-colors w-fit">Read Full Article</button>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <p className="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest mb-3">{pub.author} • {pub.date}</p>
+                    <h3 className="text-lg font-bold serif-font mb-3 leading-tight text-[var(--text-main)] group-hover:text-yellow-500 transition-colors line-clamp-2 h-[2.8rem]">{pub.title}</h3>
+                    <p className="text-xs text-[var(--text-muted)] mb-6 line-clamp-3 flex-grow leading-relaxed">"{pub.summary}"</p>
+                    <button onClick={() => onNavigate(Page.News)} className="text-[10px] font-black text-blue-500 hover:text-yellow-400 uppercase tracking-widest transition-colors w-fit">READ FULL →</button>
                   </div>
                 </div>
               ))
@@ -334,29 +333,29 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
                 </svg>
               </div>
               <h3 className="text-h3 font-semibold mb-2 text-[var(--text-main)]">No Upcoming Events</h3>
-              <p className="text-[var(--text-muted)] mb-10 max-w-md">Check back soon for new events and workshops!</p>
+              <p className="text-[var(--text-muted)] mb-10 max-w-md text-center">Check back soon for new events and workshops!</p>
               <button onClick={() => onNavigate(Page.Events)} className="px-10 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl border border-white/10 transition-all flex items-center gap-3 uppercase tracking-widest text-xs">View All Events ↗</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-               {events.slice(0, 3).map((event) => (
-                  <div key={event.id} className="group glow-card rounded-[2rem] overflow-hidden flex flex-col">
-                    <div className="h-56 overflow-hidden relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+               {events.slice(0, 4).map((event) => (
+                  <div key={event.id} className="group glow-card rounded-[1.5rem] overflow-hidden flex flex-col h-full text-left">
+                    <div className="h-48 overflow-hidden relative">
                       <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                       <div className="absolute top-4 left-4">
-                        <span className="px-4 py-1.5 bg-yellow-400 text-black text-caption font-black rounded-xl uppercase tracking-widest shadow-xl">
+                        <span className="px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">
                           {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
                       </div>
                     </div>
-                    <div className="p-8">
-                      <h3 className="text-h4 mb-4 text-[var(--text-main)] leading-tight group-hover:text-yellow-500 transition-colors line-clamp-1">{event.title}</h3>
-                      <div className="flex items-center gap-2 text-yellow-500 text-caption font-black uppercase tracking-widest mb-4">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        {event.location}
+                    <div className="p-6 flex-grow flex flex-col">
+                      <h3 className="text-lg font-bold serif-font mb-3 leading-tight text-[var(--text-main)] group-hover:text-yellow-500 transition-colors line-clamp-2 h-[2.8rem]">{event.title}</h3>
+                      <div className="flex items-center gap-2 text-yellow-500 text-[9px] font-black uppercase tracking-widest mb-4">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span className="line-clamp-1">{event.location}</span>
                       </div>
-                      <p className="text-small text-[var(--text-muted)] mb-8 line-clamp-2">{event.description}</p>
-                      <button onClick={() => onNavigate(Page.Events)} className="text-small font-black text-blue-500 hover:text-yellow-500 uppercase tracking-widest transition-colors">More Details</button>
+                      <p className="text-xs text-[var(--text-muted)] mb-6 line-clamp-2 leading-relaxed flex-grow italic">"{event.description}"</p>
+                      <button onClick={() => onNavigate(Page.Events)} className="text-[10px] font-black text-blue-500 hover:text-yellow-400 uppercase tracking-widest transition-colors w-fit">DETAILS →</button>
                     </div>
                   </div>
                ))}
@@ -368,7 +367,82 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
         </div>
       </section>
       
-      {/* (Rest of Home.tsx continues normally with other sections) */}
+      {/* Achievements Showcase Section with Updated Compact Grid */}
+      <section className="py-32 px-6 bg-[var(--primary-bg)] border-t border-white/5">
+        <div className="max-w-7xl mx-auto text-left">
+          <div className="mb-16">
+            <span className="inline-block px-4 py-1 bg-yellow-400 text-black text-[10px] font-black uppercase rounded-full mb-6">Celebrating Excellence</span>
+            <h2 className="text-h1 serif-font mb-4 text-[var(--text-main)]">Student Talent & Achievements</h2>
+            <p className="text-lg text-[var(--text-muted)] font-light max-w-2xl">Showcasing the creativity and accomplishments of our students across academic and creative disciplines.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {achievements.length === 0 ? (
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-white/10 rounded-3xl text-gray-500 uppercase text-xs font-black tracking-widest">Awaiting new milestones...</div>
+            ) : (
+              achievements.slice(0, 4).map((ach) => (
+                <div key={ach.id} className="group glow-card rounded-[1.5rem] overflow-hidden flex flex-col h-full text-left">
+                  <div className="h-52 overflow-hidden relative">
+                    <img src={ach.image_url} alt={ach.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <span className="absolute bottom-4 left-4 px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">
+                      {ach.category}
+                    </span>
+                  </div>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-xl font-bold serif-font text-white mb-1 group-hover:text-yellow-400 transition-colors">{ach.name}</h3>
+                    <p className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-4">{ach.department}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-6 line-clamp-3 italic flex-grow">"{ach.description}"</p>
+                    <button onClick={() => onNavigate(Page.Achievements)} className="text-[10px] font-black text-blue-500 hover:text-yellow-400 uppercase tracking-widest transition-all w-fit">VIEW STORY →</button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Recruitment Section */}
+      <section className="py-32 px-6 bg-[var(--primary-bg)] border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-[#211f1e] rounded-[2.5rem] p-12 md:p-20 border border-white/5 shadow-3xl text-left">
+            <h2 className="text-5xl font-bold serif-font text-white mb-10">Join Our Team</h2>
+            <p className="text-lg text-gray-300 font-light mb-12 max-w-4xl leading-relaxed">Interested in writing, editing, design, or photography? Become part of our publication team and gain valuable skills while showcasing your work.</p>
+            <div className="space-y-6">
+              {isAdmin ? (
+                <div className="p-10 bg-black/40 rounded-3xl border border-yellow-400/20 space-y-8 max-w-2xl">
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500">Recruitment Controls (Admin Only)</p>
+                  <div className="flex items-center gap-4">
+                    <label className="text-sm font-bold text-gray-400">Enable Apply Button:</label>
+                    <button onClick={() => { setJoinEnabled(!joinEnabled); setHasUnsavedChanges(true); }} className={`px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${joinEnabled ? 'bg-green-500 text-white' : 'bg-red-600 text-white'}`}>{joinEnabled ? 'ENABLED' : 'DISABLED'}</button>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Google Form Link</label>
+                    <input type="text" className="w-full bg-black border border-white/10 rounded-xl px-5 py-4 text-white focus:border-yellow-400 outline-none text-sm" placeholder="https://docs.google.com/forms/..." value={joinLink} onChange={(e) => { setJoinLink(e.target.value); setHasUnsavedChanges(true); }} />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <button disabled={!joinEnabled} onClick={() => joinEnabled && window.open(joinLink, '_blank')} className={`px-12 py-5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${joinEnabled ? 'bg-yellow-400 text-black hover:bg-yellow-500 shadow-xl' : 'bg-[#5e667d] text-[#ffffff]/60 cursor-not-allowed'}`}>Apply to Join</button>
+                  <p className="text-sm font-medium text-yellow-500">{joinNotice}</p>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Sync Bar */}
+      {isAdmin && (
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[500] w-full max-xl px-8 pointer-events-none">
+          <div className="bg-[var(--secondary-bg)]/95 border border-[var(--border-color)] p-6 rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.5)] flex items-center justify-between gap-10 pointer-events-auto backdrop-blur-3xl">
+             <div className="flex items-center gap-6 pl-6">
+                <div className={`w-4 h-4 rounded-full ${hasUnsavedChanges ? 'bg-yellow-400 animate-pulse' : 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]'}`}></div>
+                <p className="text-small font-black uppercase tracking-[0.3em] text-[var(--text-main)]/90">{hasUnsavedChanges ? 'Changes Pending' : 'Home Synced'}</p>
+             </div>
+             <button disabled={!hasUnsavedChanges || isSyncing} onClick={handleSync} className={`px-10 py-4 rounded-2xl text-caption font-black uppercase tracking-widest transition-all ${!hasUnsavedChanges ? 'bg-white/10 text-gray-400' : 'bg-yellow-400 text-black shadow-xl hover:scale-105 active:scale-95'}`}>{isSyncing ? 'Syncing...' : 'Sync to Cloud'}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

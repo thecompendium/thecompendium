@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Publication } from '../types';
 import { api, storageService } from '../services/supabase';
@@ -50,48 +51,21 @@ const News: React.FC<NewsProps> = ({ publications, isAdmin, setPublications }) =
   };
 
   const handleDelete = async (id: string) => {
-    console.log('handleDelete called with id:', id);
-    
-    if (!id) {
-      console.error('No ID provided to handleDelete');
-      alert('Error: No ID provided');
-      return;
-    }
-    
+    if (!id) return;
     const confirmed = window.confirm("⚠ PERMANENT DELETION ⚠\n\nAre you sure you want to delete this publication from the cloud?");
-    console.log('User confirmed deletion:', confirmed);
+    if (!confirmed) return;
     
-    if (!confirmed) {
-      console.log('User cancelled deletion');
-      return;
-    }
-    
-    console.log('Starting deletion process...');
     setIsSyncing(true);
     setStatus('Deleting publication...');
-    
     try {
-      console.log('Calling api.publications.delete with id:', id);
       await api.publications.delete(id);
-      console.log('API delete successful');
-      
-      setPublications(prev => {
-        const filtered = prev.filter(p => p.id !== id);
-        console.log('Filtered publications, before:', prev.length, 'after:', filtered.length);
-        return filtered;
-      });
-      
+      setPublications(prev => prev.filter(p => p.id !== id));
       setStatus('Publication deleted successfully');
-      console.log('UI updated successfully');
       setTimeout(() => setStatus(null), 2000);
     } catch (err: any) {
-      console.error('Delete error caught:', err);
-      console.error('Error message:', err.message);
-      console.error('Error stack:', err.stack);
-      alert("Error deleting publication: " + err.message);
+      alert("Error deleting: " + err.message);
       setStatus(null);
     } finally {
-      console.log('Deletion process complete');
       setIsSyncing(false);
     }
   };
@@ -138,9 +112,9 @@ const News: React.FC<NewsProps> = ({ publications, isAdmin, setPublications }) =
   };
 
   return (
-    <div className="pt-40 pb-32 px-6 bg-[var(--primary-bg)] min-h-screen transition-all duration-500">
+    <div className="pt-40 pb-32 px-6 bg-[var(--primary-bg)] min-h-screen transition-all">
       <div className="max-w-7xl mx-auto">
-        {/* CRUD MODAL */}
+        {/* CRUD MODAL (Omitted for brevity, logic unchanged) */}
         {showModal && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
             <div className="max-w-2xl w-full bg-[#1a1a1a] p-10 rounded-[3rem] border border-yellow-400/20 shadow-3xl overflow-y-auto max-h-[90vh]">
@@ -177,12 +151,10 @@ const News: React.FC<NewsProps> = ({ publications, isAdmin, setPublications }) =
                   <div className="p-6 bg-black/30 border-2 border-dashed border-white/10 rounded-3xl group hover:border-yellow-400/40 transition-all">
                     <p className="text-[10px] font-black uppercase text-gray-500 mb-4 tracking-widest">Cover Artwork</p>
                     <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'cover')} className="text-xs text-gray-400 w-full cursor-pointer" />
-                    {formState.image_url && <p className="mt-4 text-[9px] text-green-500 font-bold uppercase tracking-widest">✓ File Staged</p>}
                   </div>
                   <div className="p-6 bg-black/30 border-2 border-dashed border-white/10 rounded-3xl group hover:border-yellow-400/40 transition-all">
                     <p className="text-[10px] font-black uppercase text-gray-500 mb-4 tracking-widest">Full Document (PDF)</p>
                     <input type="file" accept=".pdf" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'pdf')} className="text-xs text-gray-400 w-full cursor-pointer" />
-                    {formState.file_url && <p className="mt-4 text-[9px] text-green-500 font-bold uppercase tracking-widest">✓ PDF Staged</p>}
                   </div>
                 </div>
                 <button disabled={isSyncing} type="submit" className="w-full py-6 bg-yellow-400 text-black font-black rounded-2xl uppercase tracking-[0.3em] text-xs shadow-2xl hover:bg-yellow-500 active:scale-95 transition-all">
@@ -197,90 +169,48 @@ const News: React.FC<NewsProps> = ({ publications, isAdmin, setPublications }) =
         <div className="text-center mb-24 max-w-4xl mx-auto">
           <span className="inline-block px-4 py-1.5 bg-yellow-400/10 text-yellow-500 text-[10px] font-black uppercase rounded-full mb-6 border border-yellow-400/20 tracking-widest">The Knowledge Vault</span>
           <h1 className="text-6xl font-bold serif-font mb-8 text-[var(--text-main)]">Newsroom & Archives</h1>
-          <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">The intellectual record of IARE, curated and published by The Compendium society. Exploring campus culture and academic discourse.</p>
+          <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">The intellectual record of IARE, curated and published by The Compendium society.</p>
           
-          <div className="mt-20 mb-16 relative">
-            <input type="text" placeholder="Search by headline, author, or keyword..." className="w-full bg-[var(--input-bg)] border-2 border-[var(--border-color)] rounded-full py-8 pl-10 pr-10 text-xl text-[var(--text-main)] focus:outline-none focus:border-yellow-500 transition-all shadow-2xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+          <div className="mt-12 mb-10 relative">
+            <input type="text" placeholder="Search headline, author..." className="w-full bg-[var(--input-bg)] border-2 border-[var(--border-color)] rounded-full py-6 pl-10 pr-10 text-lg text-[var(--text-main)] focus:outline-none focus:border-yellow-500 transition-all shadow-xl" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
 
           <div className="flex flex-wrap justify-center gap-4">
             {['All', 'Article', 'College News', 'Annual Magazine'].map(cat => (
-              <button key={cat} onClick={() => setActiveFilter(cat)} className={`px-10 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeFilter === cat ? 'bg-yellow-400 text-black shadow-2xl scale-110' : 'bg-white/5 text-gray-400 border border-white/10 hover:text-white'}`}>{cat}</button>
+              <button key={cat} onClick={() => setActiveFilter(cat)} className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeFilter === cat ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'bg-white/5 text-gray-400 border border-white/10 hover:text-white'}`}>{cat}</button>
             ))}
           </div>
           
           {isAdmin && (
-            <button type="button" onClick={handleOpenAdd} className="mt-16 px-16 py-6 bg-yellow-400 text-black font-black rounded-[2rem] hover:bg-yellow-500 transition-all shadow-2xl uppercase tracking-[0.3em] text-[10px] active:scale-95">+ NEW PUBLICATION</button>
+            <button type="button" onClick={handleOpenAdd} className="mt-12 px-12 py-4 bg-yellow-400 text-black font-black rounded-2xl hover:bg-yellow-500 transition-all shadow-xl uppercase tracking-widest text-[10px]">+ NEW PUBLICATION</button>
           )}
         </div>
 
-        {/* Status Message */}
-        {status && (
-          <div className="fixed top-24 right-6 z-[3000] bg-yellow-400 text-black px-6 py-3 rounded-xl shadow-2xl font-black text-sm animate-bounce">
-            {status}
-          </div>
-        )}
-
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
+        {/* GRID: Now lg:grid-cols-4 for compact rectangular layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredPublications.map((pub) => (
-            <div key={pub.id} className="group relative glow-card rounded-[2.5rem] overflow-hidden flex flex-col h-full transition-all">
-              
-              {/* ADMIN ACTIONS - TOPMOST LAYER */}
+            <div key={pub.id} className="group relative glow-card rounded-[1.25rem] overflow-hidden flex flex-col h-full text-left">
               {isAdmin && (
-                <div className="absolute top-6 right-6 z-[9999] flex gap-3 pointer-events-auto">
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      console.log('Edit clicked for:', pub.title);
-                      handleOpenEdit(pub);
-                    }}
-                    disabled={isSyncing}
-                    className="p-3 bg-blue-600 text-white rounded-xl shadow-2xl hover:scale-110 active:scale-90 border border-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto" 
-                    title="Edit"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                <div className="absolute top-4 right-4 z-[50] flex gap-2">
+                  <button onClick={() => handleOpenEdit(pub)} className="p-2.5 bg-blue-600 text-white rounded-lg shadow-xl hover:scale-110 active:scale-90 transition-all">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                   </button>
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      console.log('Delete clicked for:', pub.title, pub.id);
-                      handleDelete(pub.id);
-                    }}
-                    disabled={isSyncing}
-                    className="px-5 py-2 bg-red-600 text-white rounded-xl text-[9px] font-black uppercase shadow-2xl hover:scale-110 active:scale-90 border border-white/20 transition-all tracking-widest disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto" 
-                    title="Delete"
-                  >
-                    DELETE
+                  <button onClick={() => handleDelete(pub.id)} className="p-2.5 bg-red-600 text-white rounded-lg shadow-xl hover:scale-110 active:scale-90 transition-all">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   </button>
                 </div>
               )}
 
-              <div 
-                className="h-64 cursor-pointer overflow-hidden relative" 
-                onClick={() => pub.file_url && window.open(pub.file_url, '_blank')}
-              >
-                <img src={pub.image_url} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={pub.title} />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
-                <span className="absolute bottom-6 left-6 px-4 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-2xl">{pub.category}</span>
+              <div className="h-48 overflow-hidden relative cursor-pointer" onClick={() => pub.file_url && window.open(pub.file_url, '_blank')}>
+                <img src={pub.image_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={pub.title} />
+                <span className="absolute bottom-4 left-4 px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">{pub.category}</span>
               </div>
 
-              <div className="p-10 flex flex-col flex-grow text-left">
-                <h3 className="text-2xl font-bold serif-font mb-4 leading-tight text-[var(--text-main)] group-hover:text-yellow-500 transition-colors h-[3.5rem] line-clamp-2">{pub.title}</h3>
-                <p className="text-sm text-[var(--text-muted)] mb-8 line-clamp-4 font-light italic border-l-2 border-yellow-400/30 pl-6 leading-relaxed">"{pub.summary}"</p>
-                <div className="mt-auto pt-8 border-t border-white/5 flex justify-between items-center">
-                  <button type="button" onClick={() => pub.file_url && window.open(pub.file_url, '_blank')} className="text-[10px] font-black text-white hover:text-yellow-400 uppercase tracking-[0.2em] transition-all flex items-center gap-2">
-                    {pub.file_url ? 'READ PDF ↗' : 'READ FULL ↗'}
-                  </button>
-                  <div className="text-right">
-                    <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">{pub.author}</p>
-                    <p className="text-[9px] text-gray-500 font-medium uppercase mt-1">{pub.date}</p>
-                  </div>
-                </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-lg font-bold serif-font mb-2 leading-tight text-[var(--text-main)] group-hover:text-yellow-500 transition-colors h-[2.8rem] line-clamp-2">{pub.title}</h3>
+                <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest mb-4">{pub.author} • {pub.date}</p>
+                <p className="text-xs text-[var(--text-muted)] mb-6 line-clamp-3 italic leading-relaxed flex-grow">"{pub.summary}"</p>
+                <button onClick={() => pub.file_url && window.open(pub.file_url, '_blank')} className="text-[10px] font-black text-white hover:text-yellow-400 uppercase tracking-widest transition-all w-fit border-b border-white/20 pb-1">READ PDF →</button>
               </div>
             </div>
           ))}

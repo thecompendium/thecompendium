@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Event } from '../types';
 import { api, storageService } from '../services/supabase';
@@ -44,48 +45,21 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
   };
 
   const handleDelete = async (id: string) => {
-    console.log('handleDelete called with id:', id);
+    if (!id) return;
+    const confirmed = window.confirm("⚠ PERMANENT DELETION ⚠\n\nAre you sure you want to remove this event record?");
+    if (!confirmed) return;
     
-    if (!id) {
-      console.error('No ID provided to handleDelete');
-      alert('Error: No ID provided');
-      return;
-    }
-    
-    const confirmed = window.confirm("⚠ PERMANENT DELETION ⚠\n\nAre you sure you want to remove this event record from the society archive?");
-    console.log('User confirmed deletion:', confirmed);
-    
-    if (!confirmed) {
-      console.log('User cancelled deletion');
-      return;
-    }
-    
-    console.log('Starting deletion process...');
     setIsSyncing(true);
     setStatus('Deleting event...');
-    
     try {
-      console.log('Calling api.events.delete with id:', id);
       await api.events.delete(id);
-      console.log('API delete successful');
-      
-      setEvents(prev => {
-        const filtered = prev.filter(ev => ev.id !== id);
-        console.log('Filtered events, before:', prev.length, 'after:', filtered.length);
-        return filtered;
-      });
-      
+      setEvents(prev => prev.filter(ev => ev.id !== id));
       setStatus('Event deleted successfully');
-      console.log('UI updated successfully');
       setTimeout(() => setStatus(null), 2000);
     } catch (err: any) {
-      console.error('Delete error caught:', err);
-      console.error('Error message:', err.message);
-      console.error('Error stack:', err.stack);
       alert("Error deleting event: " + err.message);
       setStatus(null);
     } finally {
-      console.log('Deletion process complete');
       setIsSyncing(false);
     }
   };
@@ -131,7 +105,7 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
   return (
     <div className="pt-40 pb-32 px-6 bg-[var(--primary-bg)] min-h-screen transition-all">
       <div className="max-w-7xl mx-auto">
-        {/* CRUD MODAL */}
+        {/* MODAL OMITTED FOR BREVITY, LOGIC UNCHANGED */}
         {showModal && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
             <div className="max-w-2xl w-full bg-[#1c1c1c] p-10 rounded-[3rem] border border-yellow-400/20 shadow-3xl overflow-y-auto max-h-[90vh]">
@@ -186,76 +160,47 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
         <div className="text-center mb-24 max-w-4xl mx-auto">
           <span className="inline-block px-4 py-1.5 bg-yellow-400/10 text-yellow-500 text-[10px] font-black uppercase rounded-full mb-6 border border-yellow-400/20 tracking-widest">Society Engagement</span>
           <h1 className="text-6xl font-bold serif-font mb-8 text-[var(--text-main)]">Upcoming Gatherings</h1>
-          <p className="text-xl text-[var(--text-muted)] font-light max-w-2xl mx-auto leading-relaxed">Workshops, summits, and intellectual discussions hosted by our society. Join us to refine your craft and connect with the community.</p>
+          <p className="text-xl text-[var(--text-muted)] font-light max-w-2xl mx-auto leading-relaxed">Workshops, summits, and intellectual discussions hosted by our society.</p>
           {isAdmin && (
-            <button type="button" onClick={handleOpenAdd} className="mt-16 px-16 py-6 bg-yellow-400 text-black font-black rounded-3xl shadow-2xl uppercase tracking-[0.3em] text-[10px] hover:bg-yellow-500 transition-all active:scale-95">+ SCHEDULE EVENT</button>
+            <button type="button" onClick={handleOpenAdd} className="mt-12 px-12 py-4 bg-yellow-400 text-black font-black rounded-2xl shadow-xl uppercase tracking-widest text-[10px] hover:bg-yellow-500 transition-all">+ SCHEDULE EVENT</button>
           )}
         </div>
 
-        {/* Status Message */}
-        {status && (
-          <div className="fixed top-24 right-6 z-[3000] bg-yellow-400 text-black px-6 py-3 rounded-xl shadow-2xl font-black text-sm animate-bounce">
-            {status}
-          </div>
-        )}
-
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {/* GRID: lg:grid-cols-4 for compact rectangular layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {events.map((event) => (
-            <div key={event.id} className="group relative glow-card rounded-[3rem] overflow-hidden flex flex-col h-full shadow-2xl transition-all">
-              
-              {/* ADMIN ACTIONS */}
+            <div key={event.id} className="group relative glow-card rounded-[1.25rem] overflow-hidden flex flex-col h-full shadow-2xl transition-all text-left">
               {isAdmin && (
-                <div className="absolute top-8 right-8 z-[9999] flex gap-3 pointer-events-auto">
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      console.log('Edit clicked for:', event.title);
-                      handleOpenEdit(event);
-                    }}
-                    disabled={isSyncing}
-                    className="p-3 bg-blue-600 text-white rounded-xl shadow-2xl hover:scale-110 active:scale-90 border border-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                <div className="absolute top-4 right-4 z-[50] flex gap-2">
+                  <button onClick={() => handleOpenEdit(event)} className="p-2.5 bg-blue-600 text-white rounded-lg shadow-xl hover:scale-110 active:scale-90 transition-all">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                   </button>
-                  <button 
-                    type="button" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      console.log('Delete clicked for:', event.title, event.id);
-                      handleDelete(event.id);
-                    }}
-                    disabled={isSyncing}
-                    className="px-5 py-2 bg-red-600 text-white rounded-xl text-[9px] font-black uppercase shadow-2xl hover:scale-110 active:scale-90 border border-white/20 transition-all tracking-widest disabled:opacity-50 disabled:cursor-not-allowed pointer-events-auto"
-                  >
-                    DELETE
+                  <button onClick={() => handleDelete(event.id)} className="p-2.5 bg-red-600 text-white rounded-lg shadow-xl hover:scale-110 active:scale-90 transition-all">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   </button>
                 </div>
               )}
 
-              <div className="h-72 overflow-hidden relative">
+              <div className="h-48 overflow-hidden relative">
                 <img src={event.image_url} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={event.title} />
-                <div className="absolute bottom-6 left-6">
-                  <span className="px-6 py-2 bg-yellow-400 text-black text-[10px] font-black rounded-xl uppercase tracking-widest shadow-2xl border-2 border-black/10">{formatDate(event.date)}</span>
+                <div className="absolute bottom-4 left-4">
+                  <span className="px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">{formatDate(event.date)}</span>
                 </div>
               </div>
 
-              <div className="p-10 flex flex-col flex-grow text-left">
-                <h3 className="text-2xl font-bold serif-font mb-4 leading-tight group-hover:text-yellow-500 transition-colors h-[3.5rem] line-clamp-2">{event.title}</h3>
-                <div className="flex items-center gap-2 text-yellow-500 text-[9px] font-black uppercase tracking-widest mb-6 bg-yellow-400/10 px-4 py-2 rounded-xl border border-yellow-400/20 w-fit">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  {event.location}
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-lg font-bold serif-font mb-2 leading-tight group-hover:text-yellow-500 transition-colors h-[2.8rem] text-[var(--text-main)] line-clamp-2">{event.title}</h3>
+                <div className="flex items-center gap-2 text-yellow-500 text-[9px] font-black uppercase tracking-widest mb-4">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <span className="line-clamp-1">{event.location}</span>
                 </div>
-                <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed mb-10 flex-grow italic border-l-2 border-yellow-400/20 pl-6 line-clamp-4">"{event.description}"</p>
-                <div className="flex flex-col gap-4 mt-auto">
+                <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed mb-6 flex-grow italic line-clamp-3">"{event.description}"</p>
+                <div className="flex flex-col gap-3 mt-auto">
                   {event.registration_link && (
-                    <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="w-full py-4 bg-yellow-400 text-black text-[10px] font-black rounded-2xl text-center shadow-xl uppercase tracking-widest transition-all hover:bg-yellow-500 active:scale-95">REGISTER NOW ↗</a>
+                    <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-yellow-400 text-black text-[9px] font-black rounded-xl text-center shadow-lg uppercase tracking-widest transition-all hover:bg-yellow-500 active:scale-95">REGISTER ↗</a>
                   )}
                   {event.summary_file_url && (
-                    <button type="button" onClick={() => window.open(event.summary_file_url, '_blank')} className="w-full py-4 bg-white/5 text-white text-[10px] font-black rounded-2xl text-center border border-white/10 uppercase tracking-widest transition-all hover:bg-white/10 active:scale-95">VIEW EVENT REPORT ↗</button>
+                    <button type="button" onClick={() => window.open(event.summary_file_url, '_blank')} className="w-full py-3 bg-white/5 text-white text-[9px] font-black rounded-xl text-center border border-white/10 uppercase tracking-widest transition-all hover:bg-white/10 active:scale-95">REPORT ↗</button>
                   )}
                 </div>
               </div>
