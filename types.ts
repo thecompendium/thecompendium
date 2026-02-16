@@ -53,6 +53,7 @@ export interface Event {
   location: string;
   description: string;
   image_url: string;
+  category?: string;
   registration_link?: string;
   summary_file_url?: string;
   created_at?: string;

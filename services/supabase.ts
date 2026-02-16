@@ -72,9 +72,10 @@ export const api = {
         author: pub.author,
         date: pub.date,
         summary: pub.summary,
-        imageurl: pub.image_url,
-        file_url: pub.file_url,
-        link: pub.link
+        imageurl: pub.image_url, // Matches one column in provided schema
+        image_url: pub.image_url, // Matches second column in provided schema
+        file_url: pub.file_url
+        // 'link' removed as it does not exist in the schema provided
       };
       const { data, error } = await supabase.from('publications').insert([payload]).select();
       if (error) throw error;
@@ -87,8 +88,9 @@ export const api = {
         author: pub.author,
         summary: pub.summary,
         imageurl: pub.image_url,
-        file_url: pub.file_url,
-        link: pub.link
+        image_url: pub.image_url,
+        file_url: pub.file_url
+        // 'link' removed as it does not exist in the schema provided
       };
       const { data, error } = await supabase.from('publications').update(payload).eq('id', id).select();
       if (error) throw error;
@@ -177,6 +179,7 @@ export const api = {
         location: event.location,
         description: event.description,
         imageurl: event.image_url,
+        category: event.category,
         registration_link: event.registration_link,
         summary_file_url: event.summary_file_url
       };
@@ -192,6 +195,7 @@ export const api = {
         location: event.location,
         description: event.description,
         imageurl: event.image_url,
+        category: event.category,
         registration_link: event.registration_link,
         summary_file_url: event.summary_file_url
       };
