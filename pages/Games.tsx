@@ -1028,31 +1028,104 @@ const MemoryMatch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const ICONS = ['🍎', '🍌', '🍒', '🍇', '🍉', '🍓', '🥝', '🍍'];
   const [cards, setCards] = useState<{ id: number, val: string, flipped: boolean, solved: boolean }[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
+  const [moves, setMoves] = useState(0);
+  const [victory, setVictory] = useState(false);
+
   const init = () => {
-    const list = [...ICONS, ...ICONS].sort(() => Math.random() - 0.5).map((val, i) => ({ id: i, val, flipped: false, solved: false }));
-    setCards(list); setFlipped([]);
+    const list = [...ICONS, ...ICONS]
+      .sort(() => Math.random() - 0.5)
+      .map((val, i) => ({ id: i, val, flipped: false, solved: false }));
+    setCards(list);
+    setFlipped([]);
+    setMoves(0);
+    setVictory(false);
   };
+
   useEffect(() => { init(); }, []);
+
   const handleFlip = (id: number) => {
-    if (flipped.length === 2 || cards[id].flipped || cards[id].solved) return;
-    const nextCards = [...cards]; nextCards[id].flipped = true; setCards(nextCards); setFlipped([...flipped, id]);
+    if (flipped.length === 2 || cards[id].flipped || cards[id].solved || victory) return;
+
+    const nextCards = [...cards];
+    nextCards[id].flipped = true;
+    setCards(nextCards);
+
+    const newFlipped = [...flipped, id];
+    setFlipped(newFlipped);
+
+    if (newFlipped.length === 2) {
+      setMoves(m => m + 1);
+    }
   };
+
   useEffect(() => {
     if (flipped.length === 2) {
       const [id1, id2] = flipped;
-      if (cards[id1].val === cards[id2].val) setTimeout(() => { setCards(prev => prev.map(c => (c.id === id1 || c.id === id2) ? { ...c, solved: true } : c)); setFlipped([]); }, 500);
-      else setTimeout(() => { setCards(prev => prev.map(c => (c.id === id1 || c.id === id2) ? { ...c, flipped: false } : c)); setFlipped([]); }, 1000);
+      if (cards[id1].val === cards[id2].val) {
+        setTimeout(() => {
+          setCards(prev => {
+            const updated = prev.map(c => (c.id === id1 || c.id === id2) ? { ...c, solved: true } : c);
+            if (updated.every(c => c.solved)) setVictory(true);
+            return updated;
+          });
+          setFlipped([]);
+        }, 500);
+      } else {
+        setTimeout(() => {
+          setCards(prev => prev.map(c => (c.id === id1 || c.id === id2) ? { ...c, flipped: false } : c));
+          setFlipped([]);
+        }, 1000);
+      }
     }
-  }, [flipped]);
+  }, [flipped, cards]);
+
   return (
-    <div className="max-w-xl mx-auto text-center animate-fadeIn">
-      <button onClick={onBack} className="mb-10 text-yellow-400 font-bold uppercase tracking-widest text-xs">← Back to Dashboard</button>
-      <h2 className="text-4xl font-black serif-font uppercase text-white mb-8">Memory Match</h2>
-      <div className="grid grid-cols-4 gap-4">
-         {cards.map((card) => (
-           <div key={card.id} onClick={() => handleFlip(card.id)} className={`aspect-square rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all duration-500 transform ${card.flipped || card.solved ? 'bg-white text-black rotate-y-180' : 'bg-white/10 text-transparent border border-white/10 hover:bg-white/20'}`}>{(card.flipped || card.solved) ? card.val : '❓'}</div>
-         ))}
+    <div className="max-w-xl mx-auto text-center animate-fadeIn relative">
+      <button onClick={onBack} className="mb-10 text-yellow-400 font-bold uppercase tracking-widest text-xs flex items-center mx-auto hover:text-white transition-colors">
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7"/></svg>
+        Back to Dashboard
+      </button>
+      
+      <div className="flex justify-between items-end mb-12 px-2">
+        <div className="text-left">
+          <h2 className="text-5xl font-black serif-font uppercase text-white leading-none">Memory</h2>
+          <p className="text-[10px] font-black uppercase text-pink-400 tracking-[0.3em] mt-3">Find the pairs</p>
+        </div>
+        <div className="bg-white/10 px-6 py-4 rounded-2xl border border-white/5 shadow-2xl backdrop-blur-md">
+           <p className="text-[10px] font-black uppercase text-gray-500 mb-1">Move Count</p>
+           <p className="text-3xl font-black text-pink-400">{moves}</p>
+        </div>
       </div>
+
+      <div className="relative grid grid-cols-4 gap-4 p-4 bg-black/20 rounded-[2rem] border border-white/5 shadow-inner">
+         {cards.map((card) => (
+           <div 
+             key={card.id} 
+             onClick={() => handleFlip(card.id)} 
+             className={`aspect-square rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all duration-500 transform preserve-3d shadow-xl ${card.flipped || card.solved ? 'bg-white text-black rotate-y-180 scale-100 shadow-pink-500/20' : 'bg-white/5 text-transparent border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95'}`}
+           >
+             {(card.flipped || card.solved) ? card.val : '❓'}
+           </div>
+         ))}
+
+         {victory && (
+           <div className="absolute inset-0 bg-black/80 backdrop-blur-xl rounded-[2rem] flex flex-col items-center justify-center z-50 animate-fadeIn">
+              <span className="text-6xl mb-6">🏆</span>
+              <h3 className="text-5xl font-black serif-font text-white uppercase mb-2">Victory!</h3>
+              <p className="text-pink-400 font-bold text-xl uppercase tracking-widest mb-10">Solved in {moves} Moves</p>
+              <button 
+                onClick={init} 
+                className="px-10 py-4 bg-pink-500 text-white font-black rounded-xl uppercase tracking-widest shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:bg-pink-600 hover:scale-105 active:scale-95 transition-all"
+              >
+                Play Again
+              </button>
+           </div>
+         )}
+      </div>
+
+      <button onClick={init} className="mt-10 text-[10px] font-black uppercase text-gray-500 hover:text-white transition-colors tracking-[0.2em] py-2 px-6 border border-white/5 rounded-full">
+        Reset Board
+      </button>
     </div>
   );
 };
