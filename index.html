@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Compendium | IARE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Dark Theme (Default) - Deep Blue Base #021496 */
+      --primary-bg: #021496;
+      --secondary-bg: #010b1a;
+      --text-main: #ffffff;
+      --text-muted: #cbd5e1;
+      --card-bg: #211f1e;
+      --accent-color: #facc15;
+      --border-color: rgba(250, 204, 21, 0.3);
+      --input-bg: rgba(0, 0, 0, 0.3);
+      --glow-intensity: 0.3;
+    }
+
+    .light-theme {
+      /* Light Theme - Sophisticated White & Deep Blue */
+      --primary-bg: #ffffff;
+      --secondary-bg: #f0f4f9;
+      --text-main: #021496;
+      --text-muted: #334155;
+      --card-bg: #211f1e;
+      --accent-color: #eab308;
+      --border-color: rgba(234, 179, 8, 0.4);
+      --input-bg: #f8fafc;
+      --glow-intensity: 0.15;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      transition: background-color 0.4s ease, color 0.4s ease;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6, .serif-font {
+      font-family: 'Crimson Pro', serif;
+      line-height: 1.2;
+    }
+
+    /* Hierarchy Classes */
+    .text-h1 { font-size: 48px; font-weight: 700; }
+    .text-h2 { font-size: 36px; font-weight: 700; }
+    .text-h3 { font-size: 30px; font-weight: 600; }
+    .text-h4 { font-size: 24px; font-weight: 600; }
+    .text-h5 { font-size: 20px; font-weight: 600; }
+    .text-h6 { font-size: 18px; font-weight: 500; }
+    .text-body { font-size: 16px; }
+    .text-small { font-size: 14px; }
+    .text-caption { font-size: 12px; }
+
+    /* Yellow Glow Border Utility */
+    .glow-card {
+      background-color: var(--card-bg) !important;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 0 20px rgba(250, 204, 21, var(--glow-intensity));
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glow-card:hover {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 35px rgba(250, 204, 21, calc(var(--glow-intensity) + 0.2));
+      transform: translateY(-8px);
+    }
+
+    /* Theme Overrides */
+    .light-theme .bg-\[\#021496\],
+    .light-theme .bg-gradient-to-b.from-\[\#021496\],
+    .light-theme .bg-\[\#001bb8\] {
+      background-color: var(--primary-bg) !important;
+      background-image: none !important;
+    }
+
+    .light-theme .bg-\[\#010d6e\]\/50,
+    .light-theme .bg-white\/\[0\.02\] {
+      background-color: var(--card-bg) !important;
+    }
+
+    .light-theme .text-white {
+      color: var(--text-main) !important;
+    }
+
+    .accent-gradient {
+      background: linear-gradient(90deg, #ffc107 0%, #ff9800 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fadeInUp {
+      opacity: 0;
+      animation: fadeInUp 1s ease-out forwards;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+  }
+}
+</script>
+</head>
+<body class="dark-mode">
+  <div id="root"></div>
+</body>
+</html>

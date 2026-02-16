@@ -1,0 +1,8 @@
+{
+  "name": "The Compendium - IARE News & Publication Society",
+  "description": "The official student publication platform for the Institute of Aeronautical Engineering (IARE), showcasing student voices, achievements, and campus news.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
