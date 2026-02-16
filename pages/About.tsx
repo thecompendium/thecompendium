@@ -101,7 +101,6 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
       if (savedHero) setAboutUsImage(savedHero);
       if (savedJourney && savedJourney !== '[]') {
         let parsed = JSON.parse(savedJourney);
-        // Ensure every year has a stable ID for react keys
         parsed = parsed.map((y: any) => ({ ...y, id: y.id || `y-${y.year}-${Math.random()}` }));
         const sorted = parsed.sort((a: any, b: any) => b.year - a.year);
         setJourneyData(sorted);
@@ -132,7 +131,6 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
     if (isNaN(newYearVal)) return;
     setJourneyData(prev => {
       const newData = prev.map(y => y.id === id ? { ...y, year: newYearVal } : y);
-      // If we're updating the currently active milestone, update activeYear state to match
       const updatedItem = newData.find(item => item.id === id);
       if (updatedItem && journeyData.find(j => j.id === id)?.year === activeYear) {
         setActiveYear(newYearVal);
@@ -175,16 +173,11 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
 
   const handleDeleteYear = () => {
     if (!confirm(`Are you sure you want to delete the ${activeYear} milestone? All data for this year will be permanently removed from the archives.`)) return;
-    
     const newData = journeyData.filter(y => y.year !== activeYear);
     setJourneyData(newData);
     setHasUnsavedChanges(true);
-    
-    if (newData.length > 0) {
-      setActiveYear(newData[0].year);
-    } else {
-      setActiveYear(2019);
-    }
+    if (newData.length > 0) setActiveYear(newData[0].year);
+    else setActiveYear(2019);
   };
 
   const handleStageImage = (file: File, type: 'about' | 'milestone' | 'leader' | 'domain' | 'gallery_add', id?: string) => {
@@ -357,7 +350,6 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
             <div className="max-w-7xl mx-auto px-6 text-center">
               <h2 className="text-3xl font-bold serif-font mb-3">Key Facts</h2>
               <p className="text-gray-400 mb-12 font-light text-sm">A snapshot of our organization and impact</p>
-              
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                   { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
@@ -381,7 +373,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
             </div>
           </section>
 
-          {/* Journey Section */}
+          {/* Journey Section Snapshot */}
           <section className="py-24 px-6 bg-[#030b5e]">
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-between items-center mb-16">
@@ -398,7 +390,6 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                    )}
                  </div>
               </div>
-              
               <div className="flex flex-col lg:flex-row gap-12 items-start">
                 <div className="w-full lg:w-1/2 text-left">
                   <div className="relative group overflow-hidden rounded-2xl aspect-[1.8/1] mb-10 bg-[#211f1e] shadow-2xl">
@@ -407,16 +398,10 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                       <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'milestone')} /><span className="bg-yellow-400 text-black px-4 py-2 rounded-lg text-[9px] font-black uppercase">Update Hero</span></label>
                     )}
                   </div>
-                  
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       {isAdmin ? (
-                        <input 
-                          type="number"
-                          className="bg-transparent text-3xl font-bold serif-font text-white w-24 focus:outline-none border-b border-white/10" 
-                          value={activeYear} 
-                          onChange={e => handleUpdateYearById(currentYearData.id, parseInt(e.target.value))} 
-                        />
+                        <input type="number" className="bg-transparent text-3xl font-bold serif-font text-white w-24 focus:outline-none border-b border-white/10" value={activeYear} onChange={e => handleUpdateYearById(currentYearData.id, parseInt(e.target.value))} />
                       ) : (
                         <h3 className="text-3xl font-bold serif-font text-white">{activeYear}</h3>
                       )}
@@ -427,15 +412,11 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                         <h3 className="text-2xl font-bold serif-font text-yellow-400">{currentYearData.title}</h3>
                       )}
                     </div>
-                    
                     {isAdmin ? (
                       <textarea className="w-full bg-[#211f1e] border border-white/10 text-gray-400 p-3 rounded text-base min-h-[80px] outline-none" value={currentYearData.description} onChange={e => handleUpdateYearText('description', e.target.value)} />
                     ) : (
-                      <p className="text-gray-300 text-base font-light leading-relaxed">
-                        {currentYearData.description}
-                      </p>
+                      <p className="text-gray-300 text-base font-light leading-relaxed">{currentYearData.description}</p>
                     )}
-
                     <div className={`overflow-hidden transition-all duration-500 ease-in-out ${showMore ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
                        <div className="space-y-6">
                           <div>
@@ -443,8 +424,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                              <ul className="space-y-1 text-gray-300 text-xs font-medium">
                                 {currentYearData.events?.map((ev, i) => (
                                   <li key={i} className="flex items-center gap-2">
-                                    <span className="w-1 h-1 bg-yellow-400 rounded-full"></span>
-                                    {ev}
+                                    <span className="w-1 h-1 bg-yellow-400 rounded-full"></span>{ev}
                                     {isAdmin && <button onClick={() => handleRemoveTag('events', i)} className="text-red-500 text-[8px] font-black ml-2 hover:underline">X</button>}
                                   </li>
                                 ))}
@@ -456,8 +436,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                              <ul className="space-y-1 text-gray-300 text-xs font-medium">
                                 {currentYearData.new_editions?.map((ed, i) => (
                                   <li key={i} className="flex items-center gap-2">
-                                    <span className="w-1 h-1 bg-yellow-400 rounded-full"></span>
-                                    {ed}
+                                    <span className="w-1 h-1 bg-yellow-400 rounded-full"></span>{ed}
                                     {isAdmin && <button onClick={() => handleRemoveTag('new_editions', i)} className="text-red-500 text-[8px] font-black ml-2 hover:underline">X</button>}
                                   </li>
                                 ))}
@@ -466,30 +445,18 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                           </div>
                        </div>
                     </div>
-
                     <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                      <button onClick={() => setShowMore(!showMore)} className="text-[9px] font-black uppercase text-yellow-400 hover:text-white underline underline-offset-4">
-                        {showMore ? 'Less' : 'More Details'}
-                      </button>
-                      <button onClick={() => { setViewMode('full'); window.scrollTo(0,0); }} className="text-[9px] font-black uppercase text-yellow-400 hover:text-white underline underline-offset-4">
-                        View Full Journey
-                      </button>
+                      <button onClick={() => setShowMore(!showMore)} className="text-[9px] font-black uppercase text-yellow-400 hover:text-white underline underline-offset-4">{showMore ? 'Less' : 'More Details'}</button>
+                      <button onClick={() => { setViewMode('full'); window.scrollTo(0,0); }} className="text-[9px] font-black uppercase text-yellow-400 hover:text-white underline underline-offset-4">View Full Journey</button>
                     </div>
                   </div>
-
-                  {/* Timeline Selection - Inline Editable Years */}
                   <div className="mt-16 relative pt-8">
                     <div className="absolute top-11 left-0 right-0 h-px bg-white/20"></div>
                     <div className="flex justify-start items-center relative gap-6 px-2 overflow-x-auto no-scrollbar pb-4">
                       {journeyData.slice().sort((a,b)=>a.year-b.year).map((y) => (
                          <div key={y.id} className="flex flex-col items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveYear(y.year); setShowMore(false); }}>
                             {isAdmin ? (
-                               <input 
-                                 type="number"
-                                 className={`w-14 text-center bg-transparent text-[10px] font-black tracking-widest border-b border-white/10 focus:outline-none transition-all ${activeYear === y.year ? 'text-yellow-400 border-yellow-400' : 'text-gray-400 hover:text-white'}`}
-                                 value={y.year}
-                                 onChange={(e) => handleUpdateYearById(y.id, parseInt(e.target.value))}
-                               />
+                               <input type="number" className={`w-14 text-center bg-transparent text-[10px] font-black tracking-widest border-b border-white/10 focus:outline-none transition-all ${activeYear === y.year ? 'text-yellow-400 border-yellow-400' : 'text-gray-400 hover:text-white'}`} value={y.year} onChange={(e) => handleUpdateYearById(y.id, parseInt(e.target.value))} />
                             ) : (
                                <span className={`text-[9px] font-black tracking-widest transition-all ${activeYear === y.year ? 'text-yellow-400 scale-110' : 'text-gray-400 group-hover:text-white'}`}>{y.year}</span>
                             )}
@@ -499,18 +466,13 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                     </div>
                   </div>
                 </div>
-
-                {/* Core Leaders List - Redesigned to match requested aesthetics */}
                 <div className="w-full lg:w-1/2 space-y-16 lg:pl-12 text-left">
                    {(currentYearData.leaders || []).map((leader) => (
                      <div key={leader.id} className="flex flex-col sm:flex-row gap-10 items-center sm:items-start group relative transition-all">
                         <div className="relative w-40 h-40 rounded-full overflow-hidden border-[3px] border-white/30 flex-shrink-0 bg-[#0a0f2b] shadow-2xl">
                            <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/400/400`} className="w-full h-full object-cover" alt={leader.name} />
                            {isAdmin && (
-                             <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity">
-                               <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} />
-                               <span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span>
-                             </label>
+                             <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span></label>
                            )}
                         </div>
                         <div className="flex-grow pt-2 text-center sm:text-left">
@@ -526,49 +488,37 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                                 <p className="text-xs md:text-sm text-gray-400 font-medium uppercase tracking-[0.2em] mt-2">{leader.role}</p>
                              )}
                            </div>
-                           
-                           {/* Dotted Line Separator */}
                            <div className="w-32 border-t-2 border-dotted border-white/20 my-5 mx-auto sm:mx-0"></div>
-
                            {isAdmin ? (
                               <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-gray-200 text-sm leading-relaxed focus:outline-none" rows={3} value={leader.tagline} onChange={e => handleUpdateLeader(leader.id, 'tagline', e.target.value)} />
                            ) : (
-                              <p className="text-sm md:text-base text-gray-200 font-light leading-relaxed max-w-md">
-                                {leader.tagline}
-                              </p>
+                              <p className="text-sm md:text-base text-gray-200 font-light leading-relaxed max-w-md">{leader.tagline}</p>
                            )}
-                           
                            {isAdmin && (
-                             <div className="mt-4">
-                               <button onClick={() => handleRemoveLeader(leader.id)} className="text-[9px] font-black text-red-500 hover:text-white uppercase tracking-widest border border-red-500/30 px-3 py-1 rounded">Remove Leader</button>
-                             </div>
+                             <div className="mt-4"><button onClick={() => handleRemoveLeader(leader.id)} className="text-[9px] font-black text-red-500 hover:text-white uppercase tracking-widest border border-red-500/30 px-3 py-1 rounded">Remove Leader</button></div>
                            )}
                         </div>
                      </div>
                    ))}
-                   {isAdmin && (
-                     <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-8 border-2 border-dashed border-white/10 rounded-2xl text-[10px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e]/40 relative">
-                       + ADD NEW CORE LEADER
-                     </button>
-                   )}
+                   {isAdmin && <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-8 border-2 border-dashed border-white/10 rounded-2xl text-[10px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e]/40 relative">+ ADD NEW CORE LEADER</button>}
                 </div>
               </div>
             </div>
           </section>
         </>
       ) : (
-        <div className="min-h-screen pb-40 px-6 animate-fadeIn">
+        <div className="min-h-screen pb-40 px-6 animate-fadeIn bg-[#000821]">
           <button onClick={() => setViewMode('snapshot')} className="fixed top-28 left-6 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-all z-[100] flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5">← Back</button>
-          <div className="max-w-5xl mx-auto pt-20 text-center">
+          <div className="max-w-7xl mx-auto pt-20 text-center">
              <h2 className="text-4xl md:text-5xl font-bold serif-font mb-12">{activeYear} Team Reflections</h2>
-             <div className="space-y-32 mb-40">
+             <div className="space-y-32 mb-40 max-w-5xl mx-auto">
                 {(currentYearData.leaders || []).map((leader, i) => (
                   <div key={leader.id} className={`flex flex-col ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-12 items-center lg:items-start relative group`}>
-                     <div className="relative w-44 h-44 rounded-full overflow-hidden border-4 border-yellow-400/20 flex-shrink-0 shadow-xl">
+                     <div className="relative w-44 h-44 rounded-full overflow-hidden border-4 border-yellow-400/20 flex-shrink-0 shadow-xl bg-[#0a0f2b]">
                         <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/400/400`} className="w-full h-full object-cover" alt={leader.name} />
                         {isAdmin && (<label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity z-[70]"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[9px] font-black uppercase text-yellow-400">Update</span></label>)}
                      </div>
-                     <div className="flex-grow glow-card p-10 rounded-2xl text-left">
+                     <div className="flex-grow glow-card p-10 rounded-2xl text-left bg-black/40 backdrop-blur-sm">
                         <div className="flex items-center gap-3 mb-6">
                            <h3 className="text-2xl font-bold serif-font text-yellow-400">{leader.name}</h3>
                            <span className="px-3 py-0.5 bg-yellow-400/10 text-yellow-400 text-[9px] font-black uppercase rounded-lg border border-yellow-400/20">{leader.role}</span>
@@ -576,62 +526,75 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                         {isAdmin ? (
                           <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-4 text-white min-h-[200px] text-sm font-light outline-none" value={leader.reflection} onChange={e => handleUpdateLeader(leader.id, 'reflection', e.target.value)} />
                         ) : (
-                          <div className="space-y-4 text-gray-300 font-light text-base italic leading-relaxed">
-                            {leader.reflection?.split('\n\n').map((p,idx)=>(<p key={idx}>{p}</p>))}
-                          </div>
+                          <div className="space-y-4 text-gray-300 font-light text-base italic leading-relaxed">{leader.reflection?.split('\n\n').map((p,idx)=>(<p key={idx}>{p}</p>))}</div>
                         )}
                      </div>
                   </div>
                 ))}
              </div>
 
-             {/* Domain Heads Slider */}
-             <section className="mb-40">
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl font-bold serif-font text-yellow-400 mb-3">Domain Heads</h2>
-                  <p className="text-gray-400 text-xs font-light">Meet our {activeYear} domain leaders</p>
+             {/* REDESIGNED DOMAIN HEADS SLIDER SECTION */}
+             <section className="mb-40 py-20 relative overflow-hidden">
+                <div className="text-center mb-16 relative z-10">
+                  <h2 className="text-4xl md:text-5xl font-bold serif-font text-yellow-400 mb-4">Domain Heads</h2>
+                  <p className="text-gray-400 text-sm font-light tracking-wide italic">Meet our {activeYear} domain leaders</p>
                 </div>
 
-                <div className="relative max-w-4xl mx-auto flex items-center justify-center py-16 overflow-hidden">
-                  <button onClick={prevDomain} className="absolute left-2 z-[100] w-10 h-10 bg-yellow-400 text-black rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7"/></svg>
+                <div className="relative max-w-6xl mx-auto flex items-center justify-center py-20 min-h-[600px]">
+                  {/* Circular Navigation Buttons */}
+                  <button onClick={prevDomain} className="absolute left-4 lg:left-0 z-[100] w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all text-white">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7"/></svg>
                   </button>
 
-                  <div className="flex items-center justify-center gap-8 w-full px-8 h-[400px]">
+                  <div className="relative w-full h-[500px] flex items-center justify-center">
                     {(currentYearData.domain_heads || []).map((head, idx) => {
-                      const isFocused = idx === domainCarouselIndex;
-                      const isPrev = idx === (domainCarouselIndex - 1 + (currentYearData.domain_heads?.length || 1)) % (currentYearData.domain_heads?.length || 1);
-                      const isNext = idx === (domainCarouselIndex + 1) % (currentYearData.domain_heads?.length || 1);
-                      if (!isFocused && !isPrev && !isNext && (currentYearData.domain_heads?.length || 0) > 3) return null;
+                      const total = currentYearData.domain_heads?.length || 0;
+                      if (total === 0) return null;
+                      
+                      // Calculate distance relative to carousel index for 3D layout
+                      let diff = idx - domainCarouselIndex;
+                      if (diff > total / 2) diff -= total;
+                      if (diff < -total / 2) diff += total;
+
+                      const isActive = diff === 0;
+                      const isLeft = diff === -1;
+                      const isRight = diff === 1;
+                      const isVisible = Math.abs(diff) <= 1;
+
                       return (
-                        <div key={head.id} className={`flex flex-col items-center transition-all duration-700 ease-out absolute ${isFocused ? 'scale-110 z-50 opacity-100' : 'scale-75 z-10 opacity-30 grayscale blur-[1px]'}`} style={{ transform: isFocused ? 'translateX(0)' : isPrev ? 'translateX(-150px)' : isNext ? 'translateX(150px)' : 'none' }}>
+                        <div 
+                          key={head.id} 
+                          className={`absolute flex flex-col items-center transition-all duration-700 ease-in-out ${isVisible ? 'opacity-100 z-50' : 'opacity-0 z-0 pointer-events-none'}`}
+                          style={{
+                            transform: `translateX(${diff * 280}px) scale(${isActive ? 1.25 : 0.75})`,
+                            filter: isActive ? 'blur(0)' : 'blur(4px)',
+                            opacity: isActive ? 1 : 0.4
+                          }}
+                        >
                            <div className="relative group">
-                              <div className={`w-36 h-36 md:w-48 md:h-48 rounded-full border-4 border-yellow-400 overflow-hidden shadow-2xl`}>
+                              <div className={`w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] ${isActive ? 'border-4 border-yellow-400' : 'border-4 border-white/10'}`}>
                                 <img src={head.image_url || `https://picsum.photos/seed/${head.id}/400/400`} className="w-full h-full object-cover" alt={head.name} />
-                                {isAdmin && isFocused && (
-                                   <label className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-[70]">
-                                      <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'domain', head.id)} />
-                                      <span className="text-[8px] font-black uppercase text-white">Update</span>
-                                   </label>
+                                {isAdmin && isActive && (
+                                   <label className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity z-[70]"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'domain', head.id)} /><span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span></label>
                                 )}
                               </div>
-                              {isAdmin && isFocused && (
-                                <button onClick={() => handleRemoveDomain(head.id)} className="absolute -top-3 -right-3 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12"/></svg>
-                                </button>
+                              {isAdmin && isActive && (
+                                <button onClick={() => handleRemoveDomain(head.id)} className="absolute -top-3 -right-3 w-10 h-10 bg-red-600 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12"/></svg></button>
                               )}
                            </div>
-                           {isFocused && (
-                              <div className="mt-10 text-center animate-fadeInUp">
+                           
+                           {/* Active Item Labels Positioned Below */}
+                           {isActive && (
+                              <div className="mt-12 text-center animate-fadeInUp">
                                 {isAdmin ? (
-                                   <div className="space-y-1">
-                                      <input className="bg-transparent border-b border-yellow-400/20 text-yellow-400 text-[10px] font-black uppercase tracking-widest text-center focus:outline-none w-full" value={head.role} onChange={e => handleUpdateDomain(head.id, 'role', e.target.value)} />
-                                      <input className="bg-transparent border-b border-white/10 text-3xl font-bold serif-font text-white text-center focus:outline-none w-full" value={head.name} onChange={e => handleUpdateDomain(head.id, 'name', e.target.value)} />
+                                   <div className="space-y-2">
+                                      <input className="bg-transparent border-b border-yellow-400/20 text-yellow-400 text-xs font-black uppercase tracking-[0.3em] text-center focus:outline-none w-full" value={head.role} onChange={e => handleUpdateDomain(head.id, 'role', e.target.value)} />
+                                      <input className="bg-transparent border-b border-white/10 text-4xl font-bold serif-font text-white text-center focus:outline-none w-full uppercase" value={head.name} onChange={e => handleUpdateDomain(head.id, 'name', e.target.value)} />
                                    </div>
                                 ) : (
                                    <>
-                                      <p className="text-yellow-400 text-[11px] font-black uppercase tracking-[0.3em] mb-2">{head.role}</p>
-                                      <h3 className="text-3xl md:text-4xl font-bold serif-font text-white uppercase leading-tight">{head.name}</h3>
+                                      <p className="text-yellow-400 text-xs font-black uppercase tracking-[0.3em] mb-4">{head.role}</p>
+                                      <h3 className="text-4xl md:text-5xl font-bold serif-font text-white uppercase tracking-tight">{head.name}</h3>
                                    </>
                                 )}
                               </div>
@@ -641,18 +604,18 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                     })}
                   </div>
 
-                  <button onClick={nextDomain} className="absolute right-2 z-[100] w-10 h-10 bg-yellow-400 text-black rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7"/></svg>
+                  <button onClick={nextDomain} className="absolute right-4 lg:right-0 z-[100] w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all text-white">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7"/></svg>
                   </button>
                 </div>
-                {isAdmin && <button onClick={handleAddDomainHead} className="mt-8 mx-auto px-6 py-2 border-2 border-dashed border-yellow-400/30 text-yellow-400 rounded-lg text-[8px] font-black uppercase tracking-widest hover:bg-yellow-400/10">+ ADD DOMAIN HEAD</button>}
+                {isAdmin && <div className="text-center mt-12"><button onClick={handleAddDomainHead} className="px-10 py-4 border-2 border-dashed border-yellow-400/30 text-yellow-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400/10 transition-colors">+ ADD NEW DOMAIN HEAD</button></div>}
              </section>
 
              <section className="mb-24 px-4 text-center">
                 <h2 className="text-3xl font-bold serif-font text-yellow-400 mb-12">Archive Gallery {activeYear}</h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                    {(currentYearData.gallery || []).map((img, idx) => (
-                     <div key={idx} className="relative group aspect-square rounded-[1.5rem] overflow-hidden glow-card cursor-zoom-in" onClick={() => setLightboxIndex(idx)}>
+                     <div key={idx} className="relative group aspect-square rounded-[1.5rem] overflow-hidden glow-card cursor-zoom-in shadow-2xl" onClick={() => setLightboxIndex(idx)}>
                         <img src={img} className="w-full h-full object-cover" alt="Memory" />
                         {isAdmin && <button onClick={(e) => { e.stopPropagation(); setJourneyData(prev => prev.map(y => y.year === activeYear ? {...y, gallery: y.gallery.filter(u => u !== img)} : y)); setHasUnsavedChanges(true); }} className="absolute top-3 right-3 p-2 bg-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-[80] shadow-xl"><svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth={3} stroke="currentColor" /></svg></button>}
                      </div>
