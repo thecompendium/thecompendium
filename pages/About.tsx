@@ -230,6 +230,20 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
     setDomainCarouselIndex(prev => (prev - 1 + heads.length) % heads.length);
   };
 
+  const nextLightbox = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (lightboxIndex !== null) {
+      setLightboxIndex((lightboxIndex + 1) % currentYearData.gallery.length);
+    }
+  };
+
+  const prevLightbox = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (lightboxIndex !== null) {
+      setLightboxIndex((lightboxIndex - 1 + currentYearData.gallery.length) % currentYearData.gallery.length);
+    }
+  };
+
   return (
     <div className="bg-[#000b1a] text-white pt-20 transition-all font-inter">
       {/* MODAL: ADD LEADER */}
@@ -263,10 +277,27 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
         </div>
       )}
 
-      {/* LIGHTBOX */}
+      {/* LIGHTBOX SLIDER */}
       {lightboxIndex !== null && (
         <div className="fixed inset-0 z-[1200] bg-black/98 flex items-center justify-center p-4 backdrop-blur-3xl" onClick={() => setLightboxIndex(null)}>
-          <img src={currentYearData.gallery[lightboxIndex]} className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl" alt="Full View" />
+          <button onClick={prevLightbox} className="absolute left-8 z-[1300] w-16 h-16 bg-white/10 hover:bg-yellow-400 hover:text-black rounded-full flex items-center justify-center transition-all shadow-2xl">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          
+          <div className="relative max-w-7xl max-h-[85vh] animate-fadeIn">
+             <img src={currentYearData.gallery[lightboxIndex]} className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl" alt="Full View" />
+             <div className="absolute bottom-[-40px] left-0 right-0 text-center text-xs font-black tracking-widest uppercase text-white/40">
+                {lightboxIndex + 1} / {currentYearData.gallery.length}
+             </div>
+          </div>
+
+          <button onClick={nextLightbox} className="absolute right-8 z-[1300] w-16 h-16 bg-white/10 hover:bg-yellow-400 hover:text-black rounded-full flex items-center justify-center transition-all shadow-2xl">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+          <button onClick={() => setLightboxIndex(null)} className="absolute top-8 right-8 text-white/40 hover:text-white transition-colors">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
         </div>
       )}
 
@@ -559,13 +590,14 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                 {isAdmin && <button onClick={handleAddDomainHead} className="mt-10 mx-auto px-8 py-3 border-2 border-dashed border-yellow-400/30 text-yellow-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-400/10 transition-all flex items-center gap-3">+ ADD DOMAIN LEADER</button>}
              </section>
 
+             {/* Archive Gallery Section - Stylized to match reference */}
              <section className="mb-24 px-4 text-center">
-                <h2 className="text-5xl font-bold serif-font text-yellow-400 mb-20">Archive Gallery {activeYear}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+                <h2 className="text-4xl font-bold serif-font text-yellow-400 mb-16">Archive Gallery {activeYear}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
                    {(currentYearData.gallery || []).map((img, idx) => (
-                     <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-[#211f1e] cursor-zoom-in transition-transform hover:scale-[1.02]" onClick={() => setLightboxIndex(idx)}>
+                     <div key={idx} className="relative group aspect-square rounded-[2rem] overflow-hidden border-2 border-white/10 shadow-2xl bg-[#211f1e] cursor-zoom-in transition-all hover:scale-[1.05] hover:border-yellow-400/50" onClick={() => setLightboxIndex(idx)}>
                         <img src={img} className="w-full h-full object-cover" alt="Memory" />
-                        {isAdmin && <button onClick={(e) => { e.stopPropagation(); setJourneyData(prev => prev.map(y => y.year === activeYear ? {...y, gallery: y.gallery.filter(u => u !== img)} : y)); setHasUnsavedChanges(true); }} className="absolute top-2 right-2 p-2 bg-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-[80]"><svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth={3} stroke="currentColor" /></svg></button>}
+                        {isAdmin && <button onClick={(e) => { e.stopPropagation(); setJourneyData(prev => prev.map(y => y.year === activeYear ? {...y, gallery: y.gallery.filter(u => u !== img)} : y)); setHasUnsavedChanges(true); }} className="absolute top-4 right-4 p-3 bg-red-600 rounded-xl opacity-0 group-hover:opacity-100 transition-all z-[80] shadow-xl hover:scale-110"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth={3} stroke="currentColor" /></svg></button>}
                      </div>
                    ))}
                 </div>
