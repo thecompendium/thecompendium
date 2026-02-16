@@ -60,6 +60,31 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
 
   useEffect(() => { fetchHomeConfig(); }, [fetchHomeConfig]);
 
+  // Encoding utility for audio
+  const encodeAudio = (data: Float32Array): string => {
+    const l = data.length;
+    const int16 = new Int16Array(l);
+    for (let i = 0; i < l; i++) {
+      int16[i] = data[i] * 32768;
+    }
+    const bytes = new Uint8Array(int16.buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  };
+
+  // Decoding utility for audio
+  const decodeAudio = (base64: string): Uint8Array => {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  };
+
   // AI Assistant Logic
   const startAssistant = async () => {
     if (isLiveActive) return;
@@ -82,10 +107,10 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
             const scriptProcessor = inputAudioContextRef.current!.createScriptProcessor(4096, 1, 1);
             scriptProcessor.onaudioprocess = (e) => {
               const inputData = e.inputBuffer.getChannelData(0);
-              const int16 = new Int16Array(inputData.length);
-              for (let i = 0; i < inputData.length; i++) int16[i] = inputData[i] * 32768;
-              const base64 = btoa(String.fromCharCode(...new Uint8Array(int16.buffer)));
-              sessionPromise.then(s => s.sendRealtimeInput({ media: { data: base64, mimeType: 'audio/pcm;rate=16000' } }));
+              const base64 = encodeAudio(inputData);
+              sessionPromise.then(s => s.sendRealtimeInput({ 
+                media: { data: base64, mimeType: 'audio/pcm;rate=16000' } 
+              }));
             };
             source.connect(scriptProcessor);
             scriptProcessor.connect(inputAudioContextRef.current!.destination);
@@ -93,29 +118,34 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
             setIsLiveConnecting(false);
           },
           onmessage: async (message: LiveServerMessage) => {
-            // FIX: Added safer optional chaining for TypeScript compliance
-            const parts = message.serverContent?.modelTurn?.parts;
-            const audioData = parts?.[0]?.inlineData?.data;
-            
-            if (audioData) {
-              const binary = atob(audioData);
-              const bytes = new Uint8Array(binary.length);
-              for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-              const dataInt16 = new Int16Array(bytes.buffer);
-              const buffer = audioContextRef.current!.createBuffer(1, dataInt16.length, 24000);
-              const channelData = buffer.getChannelData(0);
-              for (let i = 0; i < dataInt16.length; i++) channelData[i] = dataInt16[i] / 32768.0;
-              
-              const source = audioContextRef.current!.createBufferSource();
-              source.buffer = buffer;
-              source.connect(outputNodeRef.current!);
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, audioContextRef.current!.currentTime);
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += buffer.duration;
-              sourcesRef.current.add(source);
+            // FIX TS18048: Narrow the type of serverContent and modelTurn explicitly
+            const content = message.serverContent;
+            if (content && content.modelTurn && content.modelTurn.parts) {
+              const audioPart = content.modelTurn.parts.find(p => p.inlineData?.data);
+              if (audioPart && audioPart.inlineData) {
+                const audioData = audioPart.inlineData.data;
+                const bytes = decodeAudio(audioData);
+                const dataInt16 = new Int16Array(bytes.buffer);
+                const buffer = audioContextRef.current!.createBuffer(1, dataInt16.length, 24000);
+                const channelData = buffer.getChannelData(0);
+                for (let i = 0; i < dataInt16.length; i++) {
+                  channelData[i] = dataInt16[i] / 32768.0;
+                }
+                
+                const source = audioContextRef.current!.createBufferSource();
+                source.buffer = buffer;
+                source.connect(outputNodeRef.current!);
+                nextStartTimeRef.current = Math.max(nextStartTimeRef.current, audioContextRef.current!.currentTime);
+                source.start(nextStartTimeRef.current);
+                nextStartTimeRef.current += buffer.duration;
+                sourcesRef.current.add(source);
+              }
             }
-            if (message.serverContent?.interrupted) {
-              sourcesRef.current.forEach(s => s.stop());
+
+            if (content && content.interrupted) {
+              sourcesRef.current.forEach(s => {
+                try { s.stop(); } catch(e) {}
+              });
               sourcesRef.current.clear();
               nextStartTimeRef.current = 0;
             }
