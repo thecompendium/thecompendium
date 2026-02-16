@@ -113,18 +113,20 @@
       animation: fadeInUp 1s ease-out forwards;
     }
   </style>
-<script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+  <script type="importmap">
+  {
+    "imports": {
+      "react/": "https://esm.sh/react@^19.2.4/",
+      "react": "https://esm.sh/react@^19.2.4",
+      "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+      "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+    }
   }
-}
-</script>
+  </script>
 </head>
 <body class="dark-mode">
   <div id="root"></div>
+  <!-- Essential: Load the entry point -->
+  <script type="module" src="index.tsx"></script>
 </body>
 </html>
