@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { Publication, Achievement, TeamMember, Event, AchievementSubmission } from '../types';
 
@@ -72,10 +71,10 @@ export const api = {
         author: pub.author,
         date: pub.date,
         summary: pub.summary,
-        imageurl: pub.image_url, // Matches one column in provided schema
-        image_url: pub.image_url, // Matches second column in provided schema
+        imageurl: pub.image_url,
+        image_url: pub.image_url,
         file_url: pub.file_url
-        // 'link' removed as it does not exist in the schema provided
+        // 'link' removed as it does not exist in your schema
       };
       const { data, error } = await supabase.from('publications').insert([payload]).select();
       if (error) throw error;
@@ -90,7 +89,7 @@ export const api = {
         imageurl: pub.image_url,
         image_url: pub.image_url,
         file_url: pub.file_url
-        // 'link' removed as it does not exist in the schema provided
+        // 'link' removed as it does not exist in your schema
       };
       const { data, error } = await supabase.from('publications').update(payload).eq('id', id).select();
       if (error) throw error;
@@ -167,7 +166,7 @@ export const api = {
   },
   events: {
     async getAll() {
-      const { data, error } = await supabase.from('events').select('*').order('date', { ascending: true });
+      const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
       if (error) throw error;
       return (data || []).map(normalize);
     },
