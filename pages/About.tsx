@@ -146,6 +146,21 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
     setHasUnsavedChanges(true);
   };
 
+  const handleDeleteYear = () => {
+    if (!confirm(`Are you sure you want to delete the ${activeYear} milestone? All data for this year will be permanently removed from the archives.`)) return;
+    
+    const newData = journeyData.filter(y => y.year !== activeYear);
+    setJourneyData(newData);
+    setHasUnsavedChanges(true);
+    
+    // Switch to another year after deletion
+    if (newData.length > 0) {
+      setActiveYear(newData[0].year);
+    } else {
+      setActiveYear(2024);
+    }
+  };
+
   const handleStageImage = (file: File, type: 'about' | 'milestone' | 'leader' | 'domain' | 'gallery_add', id?: string) => {
     const blobUrl = URL.createObjectURL(file);
     setFileMap(prev => ({ ...prev, [blobUrl]: file }));
@@ -345,7 +360,17 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-between items-center mb-16">
                  <div className="w-20"></div><h2 className="text-4xl md:text-5xl font-bold serif-font text-center flex-grow text-white">Our Journey</h2>
-                 <div className="w-20 flex justify-end">{isAdmin && <button onClick={handleAddNewYear} className="px-3 py-1.5 bg-yellow-400 text-black text-[8px] font-black rounded uppercase tracking-widest">+ Year</button>}</div>
+                 <div className="w-fit flex items-center justify-end gap-3">
+                   {isAdmin && (
+                     <>
+                        <button onClick={handleDeleteYear} className="px-3 py-1.5 bg-red-600 text-white text-[8px] font-black rounded uppercase tracking-widest hover:bg-red-700 transition-colors flex items-center gap-1.5 shadow-xl">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                          DELETE YEAR
+                        </button>
+                        <button onClick={handleAddNewYear} className="px-3 py-1.5 bg-yellow-400 text-black text-[8px] font-black rounded uppercase tracking-widest hover:bg-yellow-500 transition-colors shadow-xl">+ YEAR</button>
+                     </>
+                   )}
+                 </div>
               </div>
               
               <div className="flex flex-col lg:flex-row gap-12 items-start">
