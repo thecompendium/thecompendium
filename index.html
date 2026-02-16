@@ -21,7 +21,7 @@
       --text-muted: #cbd5e1;
       --card-bg: #1a1a1a;
       --accent-color: #facc15;
-      --border-color: rgba(250, 204, 21, 0.3);
+      --border-color: rgba(250, 204, 21, 0.4);
       --input-bg: rgba(0, 0, 0, 0.3);
       --glow-intensity: 0.3;
     }
@@ -65,17 +65,17 @@
     .text-small { font-size: 14px; }
     .text-caption { font-size: 12px; }
 
-    /* Yellow Glow Border Utility */
+    /* Glowing Border Utility */
     .glow-card {
       background-color: var(--card-bg) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-color) !important;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.1), 0 10px 30px rgba(0, 0, 0, 0.4);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .glow-card:hover {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 40px rgba(250, 204, 21, 0.25);
+      border-color: var(--accent-color) !important;
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.4), 0 15px 40px rgba(0, 0, 0, 0.6);
       transform: translateY(-8px);
     }
 

@@ -324,7 +324,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', val: dynamicStats.editions, label: 'Editions' },
                   { icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', val: manualStats.members, label: 'Members', isManual: true }
                 ].map((stat, i) => (
-                  <div key={i} className="bg-black/40 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center aspect-[1.4/1] transition-all hover:border-yellow-400/30 group">
+                  <div key={i} className="glow-card border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center aspect-[1.4/1] group">
                     <div className="text-yellow-400 mb-3 group-hover:scale-110 transition-transform">
                       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={stat.icon} /></svg>
                     </div>
@@ -434,7 +434,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                 {/* LEADERS LIST */}
                 <div className="w-full lg:w-1/2 space-y-10 lg:pl-8 text-left">
                    {(currentYearData.leaders || []).map((leader) => (
-                     <div key={leader.id} className="flex gap-6 items-start group relative">
+                     <div key={leader.id} className="flex gap-6 items-start group relative glow-card p-6 rounded-2xl">
                         <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 flex-shrink-0 bg-[#211f1e] shadow-xl">
                            <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/300/300`} className="w-full h-full object-cover" alt={leader.name} />
                            {isAdmin && <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[7px] font-black uppercase text-white">Upload</span></label>}
@@ -483,7 +483,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                         <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/400/400`} className="w-full h-full object-cover" alt={leader.name} />
                         {isAdmin && (<label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity z-[70]"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[9px] font-black uppercase text-yellow-400">Update</span></label>)}
                      </div>
-                     <div className="flex-grow bg-[#211f1e] p-10 rounded-2xl border-t-4 border-l-4 border-yellow-400/30 shadow-2xl text-left">
+                     <div className="flex-grow glow-card p-10 rounded-2xl text-left">
                         <div className="flex items-center gap-3 mb-6">
                            <h3 className="text-2xl font-bold serif-font text-yellow-400">{leader.name}</h3>
                            <span className="px-3 py-0.5 bg-yellow-400/10 text-yellow-400 text-[9px] font-black uppercase rounded-lg border border-yellow-400/20">{leader.role}</span>
@@ -561,7 +561,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                 <h2 className="text-3xl font-bold serif-font text-yellow-400 mb-12">Archive Gallery {activeYear}</h2>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                    {(currentYearData.gallery || []).map((img, idx) => (
-                     <div key={idx} className="relative group aspect-square rounded-[1.5rem] overflow-hidden border-2 border-white/10 shadow-xl bg-[#211f1e] cursor-zoom-in transition-all hover:scale-[1.03] hover:border-yellow-400/40" onClick={() => setLightboxIndex(idx)}>
+                     <div key={idx} className="relative group aspect-square rounded-[1.5rem] overflow-hidden glow-card cursor-zoom-in" onClick={() => setLightboxIndex(idx)}>
                         <img src={img} className="w-full h-full object-cover" alt="Memory" />
                         {isAdmin && <button onClick={(e) => { e.stopPropagation(); setJourneyData(prev => prev.map(y => y.year === activeYear ? {...y, gallery: y.gallery.filter(u => u !== img)} : y)); setHasUnsavedChanges(true); }} className="absolute top-3 right-3 p-2 bg-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-[80] shadow-xl"><svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth={3} stroke="currentColor" /></svg></button>}
                      </div>
