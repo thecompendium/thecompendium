@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { TeamMember, Publication, JourneyYear, JourneyLeader, Page } from '../types';
 import { api, storageService } from '../services/supabase';
@@ -191,19 +192,27 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
     else if (type === 'gallery_add') setJourneyData(prev => prev.map(y => y.year === activeYear ? { ...y, gallery: [...y.gallery, blobUrl] } : y));
   };
 
+  // Fixed processDeepUploads to be more type-safe and avoid 'unknown' issues
   const processDeepUploads = async (data: any, pathHint: string = 'journey'): Promise<any> => {
     if (!data) return data;
     if (typeof data === 'string') {
       if (data.startsWith('blob:')) {
-        const stagedFile = (fileMap as Record<string, any>)[data];
+        const stagedFile = fileMap[data];
+        // Fix: Explicitly check for File instance and cast to File to avoid 'unknown' type error in recursive uploads
         if (stagedFile instanceof File) {
-          try { return await storageService.uploadFile(stagedFile, pathHint); }
-          catch (err) { console.error(err); return data; }
+          try { 
+            return await storageService.uploadFile(stagedFile as File, pathHint); 
+          } catch (err) { 
+            console.error('Upload error:', err); 
+            return data; 
+          }
         }
       }
       return data;
     }
-    if (Array.isArray(data)) return await Promise.all(data.map(item => processDeepUploads(item, pathHint)));
+    if (Array.isArray(data)) {
+      return await Promise.all(data.map(item => processDeepUploads(item, pathHint)));
+    }
     if (typeof data === 'object' && data !== null) {
       const result: any = {};
       for (const [key, value] of Object.entries(data)) {
@@ -354,7 +363,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
               <p className="text-gray-400 mb-12 font-light text-sm">A snapshot of our organization and impact</p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
+                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
                   { icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', val: dynamicStats.articles, label: 'Articles' },
                   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', val: dynamicStats.editions, label: 'Editions' },
                   { icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', val: manualStats.members, label: 'Members', isManual: true }

@@ -28,6 +28,17 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Derived Date Logic
+  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
+
+  // Filter for ONLY Upcoming Events for the Home section
+  const upcomingEvents = useMemo(() => {
+    return events
+      .filter(ev => ev.date >= today)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 4);
+  }, [events, today]);
+
   // Calculated Stats
   const stats = useMemo(() => {
     return {
@@ -163,33 +174,40 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
           {/* Upcoming Events - Newest 4 cards */}
           <section className="py-28 px-6 border-b border-black/10">
             <div className="max-w-7xl mx-auto text-left">
-              <div className="mb-16">
-                <span className="inline-block px-4 py-1 bg-black text-white text-[11px] font-black uppercase rounded-full mb-6">
-                  Mark Your Calendar
-                </span>
-                <h2 className="text-h2 serif-font mb-4 text-black">Upcoming Events</h2>
-                <p className="text-lg text-black/70 font-medium max-w-2xl leading-relaxed">
-                  The latest workshops, conferences, and competitions organized by the society.
-                </p>
+              <div className="mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div className="text-left">
+                  <span className="inline-block px-4 py-1 bg-black text-white text-[11px] font-black uppercase rounded-full mb-6">
+                    Mark Your Calendar
+                  </span>
+                  <h2 className="text-h2 serif-font mb-4 text-black">Upcoming Events</h2>
+                  <p className="text-lg text-black/70 font-medium max-w-2xl leading-relaxed">
+                    The latest workshops, conferences, and competitions organized by the society.
+                  </p>
+                </div>
+                <button onClick={() => onNavigate(Page.Events)} className="text-black hover:bg-black/10 px-6 py-2.5 rounded-lg flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-all border border-black/10 whitespace-nowrap">
+                  View All Events <span>→</span>
+                </button>
               </div>
 
-              {events.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center bg-white/30 rounded-3xl border border-black/10">
-                   <p className="text-black/60 font-bold uppercase tracking-widest">No Recent Events</p>
+              {upcomingEvents.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-center bg-white/30 rounded-3xl border border-dashed border-black/20">
+                   <div className="w-16 h-16 bg-black/5 rounded-full flex items-center justify-center mb-6">
+                     <svg className="w-8 h-8 text-black/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                   </div>
+                   <p className="text-black/60 font-bold uppercase tracking-widest text-xs">No Events Scheduled Currently</p>
+                   <p className="text-black/40 text-sm mt-2">Check back later for new updates!</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {events.slice(0, 4).map((event) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 animate-fadeIn">
+                  {upcomingEvents.map((event) => (
                       <div key={event.id} className="group relative bg-[#050a18] rounded-xl overflow-hidden flex flex-col h-full shadow-2xl transition-all text-left">
                         <div className="h-48 overflow-hidden relative">
                           <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                          {event.category && (
-                            <div className="absolute top-4 right-4">
-                              <span className="px-3 py-1 bg-[#facc15] text-white text-[10px] font-bold rounded-full uppercase tracking-widest shadow-xl">
-                                {event.category}
-                              </span>
-                            </div>
-                          )}
+                          <div className="absolute top-4 right-4">
+                            <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest shadow-xl ${event.date === today ? 'bg-green-500 text-white animate-pulse' : 'bg-[#facc15] text-black'}`}>
+                              {event.date === today ? 'Happening Today' : 'Upcoming'}
+                            </span>
+                          </div>
                         </div>
                         <div className="p-6 flex flex-col flex-grow">
                           <h3 className="text-xl font-bold serif-font mb-4 leading-tight text-white group-hover:text-yellow-400 transition-colors h-[3rem] line-clamp-2">{event.title}</h3>
@@ -210,7 +228,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
                           </div>
 
                           <button onClick={() => onNavigate(Page.Events)} className="text-[13px] font-bold text-white hover:text-yellow-400 transition-all flex items-center gap-2 group/link w-fit">
-                            View Details <span className="text-base group-hover/link:translate-x-1 transition-transform">→</span>
+                            Details & Registration <span className="text-base group-hover/link:translate-x-1 transition-transform">→</span>
                           </button>
                         </div>
                       </div>
