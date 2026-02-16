@@ -26,6 +26,7 @@ const DEFAULT_DOMAIN = (): JourneyLeader => ({
 });
 
 const DEFAULT_NEW_YEAR = (year: number): JourneyYear => ({
+  id: `y-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   year,
   title: "New Milestone Title",
   main_image: "",
@@ -39,6 +40,7 @@ const DEFAULT_NEW_YEAR = (year: number): JourneyYear => ({
 
 const INITIAL_JOURNEY_DATA: JourneyYear[] = [
   {
+    id: 'y-2019',
     year: 2019,
     title: "Vision & Beginnings",
     main_image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1200",
@@ -51,8 +53,8 @@ const INITIAL_JOURNEY_DATA: JourneyYear[] = [
         name: 'ANUSHA VAJHA', 
         role: 'FOUNDING PRESIDENT', 
         image_url: 'https://picsum.photos/seed/anusha/400/400', 
-        tagline: 'Leading the club\'s initial vision and establishing the core mission of providing a student-centric publication platform.', 
-        reflection: "It started with a simple belief: every student voice deserves a canvas. Building the foundations of The Compendium was about more than just news; it was about community." 
+        tagline: 'Establishing the core values and mission of the society, ensuring a sustainable platform for student expression.', 
+        reflection: "Leadership is about creating more leaders. It started with a simple belief: every student voice deserves a canvas." 
       }
     ],
     domain_heads: [
@@ -98,9 +100,11 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
       ]);
       if (savedHero) setAboutUsImage(savedHero);
       if (savedJourney && savedJourney !== '[]') {
-        const sorted = JSON.parse(savedJourney).sort((a: any, b: any) => b.year - a.year);
+        let parsed = JSON.parse(savedJourney);
+        // Ensure every year has a stable ID for react keys
+        parsed = parsed.map((y: any) => ({ ...y, id: y.id || `y-${y.year}-${Math.random()}` }));
+        const sorted = parsed.sort((a: any, b: any) => b.year - a.year);
         setJourneyData(sorted);
-        // Default to the most recent year if found, otherwise 2019
         if (sorted.length > 0) setActiveYear(sorted[0].year);
       } else {
         setJourneyData(INITIAL_JOURNEY_DATA);
@@ -121,6 +125,20 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
 
   const handleUpdateYearText = (field: keyof JourneyYear, value: any) => {
     setJourneyData(prev => prev.map(y => y.year === activeYear ? { ...y, [field]: value } : y));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleUpdateYearById = (id: string, newYearVal: number) => {
+    if (isNaN(newYearVal)) return;
+    setJourneyData(prev => {
+      const newData = prev.map(y => y.id === id ? { ...y, year: newYearVal } : y);
+      // If we're updating the currently active milestone, update activeYear state to match
+      const updatedItem = newData.find(item => item.id === id);
+      if (updatedItem && journeyData.find(j => j.id === id)?.year === activeYear) {
+        setActiveYear(newYearVal);
+      }
+      return newData;
+    });
     setHasUnsavedChanges(true);
   };
 
@@ -149,7 +167,8 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
 
   const handleAddNewYear = () => {
     const nextYear = Math.max(...journeyData.map(y => y.year), 2018) + 1;
-    setJourneyData(prev => [DEFAULT_NEW_YEAR(nextYear), ...prev]);
+    const newYearObj = DEFAULT_NEW_YEAR(nextYear);
+    setJourneyData(prev => [newYearObj, ...prev]);
     setActiveYear(nextYear);
     setHasUnsavedChanges(true);
   };
@@ -341,7 +360,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
               
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
+                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
                   { icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', val: dynamicStats.articles, label: 'Articles' },
                   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', val: dynamicStats.editions, label: 'Editions' },
                   { icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', val: manualStats.members, label: 'Members', isManual: true }
@@ -391,7 +410,16 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                   
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-3xl font-bold serif-font text-white">{activeYear}</h3>
+                      {isAdmin ? (
+                        <input 
+                          type="number"
+                          className="bg-transparent text-3xl font-bold serif-font text-white w-24 focus:outline-none border-b border-white/10" 
+                          value={activeYear} 
+                          onChange={e => handleUpdateYearById(currentYearData.id, parseInt(e.target.value))} 
+                        />
+                      ) : (
+                        <h3 className="text-3xl font-bold serif-font text-white">{activeYear}</h3>
+                      )}
                       <span className="w-px h-6 bg-white/20"></span>
                       {isAdmin ? (
                         <input className="bg-transparent text-yellow-400 text-2xl font-bold serif-font w-full focus:outline-none border-b border-white/10" value={currentYearData.title} onChange={e => handleUpdateYearText('title', e.target.value)} />
@@ -449,13 +477,22 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                     </div>
                   </div>
 
-                  {/* Timeline Selection */}
+                  {/* Timeline Selection - Inline Editable Years */}
                   <div className="mt-16 relative pt-8">
                     <div className="absolute top-11 left-0 right-0 h-px bg-white/20"></div>
                     <div className="flex justify-start items-center relative gap-6 px-2 overflow-x-auto no-scrollbar pb-4">
                       {journeyData.slice().sort((a,b)=>a.year-b.year).map((y) => (
-                         <div key={y.year} className="flex flex-col items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveYear(y.year); setShowMore(false); }}>
-                            <span className={`text-[9px] font-black tracking-widest transition-all ${activeYear === y.year ? 'text-yellow-400 scale-110' : 'text-gray-400 group-hover:text-white'}`}>{y.year}</span>
+                         <div key={y.id} className="flex flex-col items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveYear(y.year); setShowMore(false); }}>
+                            {isAdmin ? (
+                               <input 
+                                 type="number"
+                                 className={`w-14 text-center bg-transparent text-[10px] font-black tracking-widest border-b border-white/10 focus:outline-none transition-all ${activeYear === y.year ? 'text-yellow-400 border-yellow-400' : 'text-gray-400 hover:text-white'}`}
+                                 value={y.year}
+                                 onChange={(e) => handleUpdateYearById(y.id, parseInt(e.target.value))}
+                               />
+                            ) : (
+                               <span className={`text-[9px] font-black tracking-widest transition-all ${activeYear === y.year ? 'text-yellow-400 scale-110' : 'text-gray-400 group-hover:text-white'}`}>{y.year}</span>
+                            )}
                             <div className={`w-3 h-3 rotate-45 border-2 transition-all ${activeYear === y.year ? 'bg-yellow-400 border-yellow-400' : 'bg-transparent border-white/30'}`}></div>
                          </div>
                       ))}

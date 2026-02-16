@@ -69,6 +69,7 @@ export interface JourneyLeader {
 }
 
 export interface JourneyYear {
+  id: string;
   year: number;
   title: string;
   description: string;
