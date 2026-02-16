@@ -456,41 +456,48 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                   </div>
                 </div>
 
-                {/* LEADERS LIST */}
-                <div className="w-full lg:w-1/2 space-y-10 lg:pl-8 text-left">
+                {/* LEADERS LIST - REDESIGNED PER SCREENSHOT */}
+                <div className="w-full lg:w-1/2 space-y-16 lg:pl-12 text-left">
                    {(currentYearData.leaders || []).map((leader) => (
-                     <div key={leader.id} className="flex gap-6 items-start group relative glow-card p-6 rounded-2xl">
-                        <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 flex-shrink-0 bg-[#211f1e] shadow-xl">
-                           <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/300/300`} className="w-full h-full object-cover" alt={leader.name} />
-                           {isAdmin && <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[7px] font-black uppercase text-white">Upload</span></label>}
+                     <div key={leader.id} className="flex flex-col sm:flex-row gap-10 items-center sm:items-start group relative transition-all">
+                        <div className="relative w-40 h-40 rounded-full overflow-hidden border-[3px] border-white/30 flex-shrink-0 bg-[#0a0f2b] shadow-2xl">
+                           <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/400/400`} className="w-full h-full object-cover" alt={leader.name} />
+                           {isAdmin && <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span></label>}
                         </div>
-                        <div className="flex-grow space-y-3 pt-1">
+                        <div className="flex-grow pt-2 text-center sm:text-left">
                            <div>
                              {isAdmin ? (
-                                <input className="bg-transparent border-b border-white/10 text-xl font-bold serif-font text-white w-full focus:outline-none mb-1" value={leader.name} onChange={e => handleUpdateLeader(leader.id, 'name', e.target.value)} />
+                                <input className="bg-transparent border-b border-white/10 text-3xl font-bold serif-font text-white w-full focus:outline-none mb-2" value={leader.name} onChange={e => handleUpdateLeader(leader.id, 'name', e.target.value)} />
                              ) : (
-                                <h4 className="text-xl font-bold serif-font text-white uppercase tracking-tight">{leader.name}</h4>
+                                <h4 className="text-2xl md:text-3xl font-bold serif-font text-white uppercase tracking-tight">{leader.name}</h4>
                              )}
                              {isAdmin ? (
-                                <input className="bg-transparent border-b border-white/10 text-[9px] text-gray-400 font-bold uppercase tracking-widest w-full focus:outline-none" value={leader.role} onChange={e => handleUpdateLeader(leader.id, 'role', e.target.value)} />
+                                <input className="bg-transparent border-b border-white/10 text-sm text-gray-400 font-medium uppercase tracking-[0.2em] w-full focus:outline-none" value={leader.role} onChange={e => handleUpdateLeader(leader.id, 'role', e.target.value)} />
                              ) : (
-                                <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{leader.role}</p>
+                                <p className="text-xs md:text-sm text-gray-400 font-medium uppercase tracking-[0.2em] mt-2">{leader.role}</p>
                              )}
                            </div>
+                           
+                           {/* DOTTED LINE SEPARATOR */}
+                           <div className="w-32 border-t-2 border-dotted border-white/20 my-5 mx-auto sm:mx-0"></div>
+
                            {isAdmin ? (
-                              <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-2 text-gray-300 text-xs leading-relaxed focus:outline-none" rows={2} value={leader.tagline} onChange={e => handleUpdateLeader(leader.id, 'tagline', e.target.value)} />
+                              <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-gray-200 text-sm leading-relaxed focus:outline-none" rows={3} value={leader.tagline} onChange={e => handleUpdateLeader(leader.id, 'tagline', e.target.value)} />
                            ) : (
-                              <p className="text-gray-300 text-xs font-light leading-relaxed max-w-sm">
+                              <p className="text-sm md:text-base text-gray-200 font-light leading-relaxed max-w-md">
                                 {leader.tagline}
                               </p>
                            )}
+                           
                            {isAdmin && (
-                             <button onClick={() => handleRemoveLeader(leader.id)} className="text-[7px] font-black text-red-500 hover:text-white uppercase">Remove</button>
+                             <div className="mt-4">
+                               <button onClick={() => handleRemoveLeader(leader.id)} className="text-[9px] font-black text-red-500 hover:text-white uppercase tracking-widest border border-red-500/30 px-3 py-1 rounded">Remove Leader</button>
+                             </div>
                            )}
                         </div>
                      </div>
                    ))}
-                   {isAdmin && <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-5 border-2 border-dashed border-white/10 rounded-xl text-[9px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e] relative">+ CORE LEADER</button>}
+                   {isAdmin && <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-6 border-2 border-dashed border-white/10 rounded-2xl text-[10px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e]/40 relative">+ ADD NEW CORE LEADER</button>}
                 </div>
               </div>
             </div>
