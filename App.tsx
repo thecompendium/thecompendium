@@ -36,21 +36,33 @@ const App: React.FC = () => {
   }, [isDarkMode]);
 
   const fetchData = async () => {
+    console.log("[App] Starting data fetch...");
     setIsLoading(true);
     try {
-      const [pubs, achs, tm, evs] = await Promise.all([
+      // Use individual try-catches or Promise.allSettled to prevent total failure
+      const results = await Promise.allSettled([
         api.publications.getAll(),
         api.achievements.getAll(),
         api.team.getAll(),
         api.events.getAll()
       ]);
-      setPublications(pubs as Publication[]);
-      setAchievements(achs as Achievement[]);
-      setTeam(tm as TeamMember[]);
-      setEvents(evs as Event[]);
+
+      if (results[0].status === 'fulfilled') setPublications(results[0].value as Publication[]);
+      else console.error("Publications fetch failed", results[0].reason);
+
+      if (results[1].status === 'fulfilled') setAchievements(results[1].value as Achievement[]);
+      else console.error("Achievements fetch failed", results[1].reason);
+
+      if (results[2].status === 'fulfilled') setTeam(results[2].value as TeamMember[]);
+      else console.error("Team fetch failed", results[2].reason);
+
+      if (results[3].status === 'fulfilled') setEvents(results[3].value as Event[]);
+      else console.error("Events fetch failed", results[3].reason);
+
     } catch (error) {
-      console.error("Supabase Fetch Error:", error);
+      console.error("Critical Supabase Fetch Error:", error);
     } finally {
+      console.log("[App] Initial fetch complete.");
       setIsLoading(false);
     }
   };
@@ -90,7 +102,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#000b1a]">
         <div className="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-6 text-gray-500 font-bold tracking-[0.3em] text-[10px] uppercase">Connecting...</p>
+        <p className="mt-6 text-gray-400 font-bold tracking-[0.3em] text-[10px] uppercase">Connecting to Database...</p>
       </div>
     );
   }

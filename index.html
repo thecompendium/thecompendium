@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    // Shim for process.env to prevent ReferenceErrors in production ESM environments
+    window.process = window.process || { env: {} };
+  </script>
   <style>
     :root {
       /* Dark Theme (Default) - Deep Blue Base #021496 */
@@ -43,6 +47,7 @@
       transition: background-color 0.4s ease, color 0.4s ease;
       font-size: 16px;
       line-height: 1.6;
+      margin: 0;
     }
 
     h1, h2, h3, h4, h5, h6, .serif-font {
@@ -75,7 +80,6 @@
       transform: translateY(-8px);
     }
 
-    /* Theme Overrides */
     .light-theme .bg-\[\#021496\],
     .light-theme .bg-gradient-to-b.from-\[\#021496\],
     .light-theme .bg-\[\#001bb8\] {
