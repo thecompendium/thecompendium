@@ -65,7 +65,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
     if (isLiveActive) return;
     setIsLiveConnecting(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
       
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
@@ -93,7 +93,10 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
             setIsLiveConnecting(false);
           },
           onmessage: async (message: LiveServerMessage) => {
-            const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+            // FIX: Added safer optional chaining for TypeScript compliance
+            const parts = message.serverContent?.modelTurn?.parts;
+            const audioData = parts?.[0]?.inlineData?.data;
+            
             if (audioData) {
               const binary = atob(audioData);
               const bytes = new Uint8Array(binary.length);
@@ -309,7 +312,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
                {events.slice(0, 3).map((event) => (
                   <div key={event.id} className="group glow-card rounded-[2rem] overflow-hidden flex flex-col">
                     <div className="h-56 overflow-hidden relative">
-                      <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                       <div className="absolute top-4 left-4">
                         <span className="px-4 py-1.5 bg-yellow-400 text-black text-caption font-black rounded-xl uppercase tracking-widest shadow-xl">
                           {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

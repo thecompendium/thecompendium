@@ -1,5 +1,5 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { Publication, Achievement, TeamMember, Event, AchievementSubmission } from '../types';
 
 const SUPABASE_URL = 'https://ekrrilidqrjbddapdfkc.supabase.co';
