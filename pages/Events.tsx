@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Event } from '../types';
 import { api, storageService } from '../services/supabase';
@@ -170,28 +171,28 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
           </div>
         )}
 
-        {/* HEADER */}
+        {/* HEADER - FIXED Visibility for Light Mode */}
         <div className="text-center mb-12 max-w-3xl mx-auto">
           <span className="inline-block px-3 py-1 bg-yellow-400/10 text-yellow-500 text-[9px] font-black uppercase rounded-full mb-5 border border-yellow-400/20 tracking-[0.2em]">Society Engagement</span>
-          <h1 className="text-5xl md:text-6xl font-bold serif-font mb-6 text-white drop-shadow-2xl">Society Gatherings</h1>
-          <p className="text-base text-gray-300 font-light leading-relaxed max-w-xl mx-auto">Workshops, summits, and intellectual discussions hosted by our society.</p>
+          <h1 className="text-5xl md:text-6xl font-bold serif-font mb-6 text-[var(--text-main)] drop-shadow-sm">Society Gatherings</h1>
+          <p className="text-base text-[var(--text-muted)] font-light leading-relaxed max-w-xl mx-auto">Workshops, summits, and intellectual discussions hosted by our society.</p>
           {isAdmin && (
             <button type="button" onClick={handleOpenAdd} className="mt-10 px-8 py-3 bg-yellow-400 text-black font-black rounded-xl shadow-xl uppercase tracking-widest text-[9px] hover:bg-yellow-500 transition-all border border-black/10">+ SCHEDULE EVENT</button>
           )}
         </div>
 
-        {/* CATEGORY SWITCHER */}
+        {/* CATEGORY SWITCHER - FIXED Contrast for Light Mode */}
         <div className="flex justify-center mb-20">
-          <div className="bg-black/40 backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-white/5 flex gap-1 shadow-2xl">
+          <div className="bg-[var(--card-bg)] backdrop-blur-xl p-1.5 rounded-[1.5rem] border border-[var(--border-color)] flex gap-1 shadow-xl">
             <button 
               onClick={() => setActiveTab('upcoming')}
-              className={`px-10 py-3 rounded-[1.25rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'upcoming' ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'text-gray-400 hover:text-white'}`}
+              className={`px-10 py-3 rounded-[1.25rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'upcoming' ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
             >
               Upcoming
             </button>
             <button 
               onClick={() => setActiveTab('conducted')}
-              className={`px-10 py-3 rounded-[1.25rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'conducted' ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'text-gray-400 hover:text-white'}`}
+              className={`px-10 py-3 rounded-[1.25rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${activeTab === 'conducted' ? 'bg-yellow-400 text-black shadow-lg scale-105' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
             >
               Conducted
             </button>
@@ -209,7 +210,7 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 animate-fadeIn">
             {filteredEvents.map((event) => (
-              <div key={event.id} className="group relative glow-card rounded-[1.5rem] overflow-hidden flex flex-col h-full shadow-2xl transition-all text-left border border-white/5 bg-[#0a0f2b]/60">
+              <div key={event.id} className="group relative glow-card rounded-[1.5rem] overflow-hidden flex flex-col h-full shadow-2xl transition-all text-left border border-[var(--border-color)] bg-[var(--card-bg)]">
                 {isAdmin && (
                   <div className="absolute top-4 right-4 z-[50] flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => handleOpenEdit(event)} className="p-2 bg-blue-600 text-white rounded-lg shadow-xl hover:scale-110 transition-transform">
@@ -233,27 +234,27 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
                 </div>
 
                 <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold serif-font mb-2 leading-tight text-white group-hover:text-yellow-400 transition-colors h-[3rem] line-clamp-2">{event.title}</h3>
+                  <h3 className="text-xl font-bold serif-font mb-2 leading-tight text-[var(--text-main)] group-hover:text-[#021496] transition-colors h-[3rem] line-clamp-2">{event.title}</h3>
                   
                   <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-yellow-400 text-[10px] font-bold uppercase tracking-widest opacity-80">
+                    <div className="flex items-center gap-2 text-[#021496] light-theme:text-[#021496] text-[10px] font-bold uppercase tracking-widest opacity-80">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       <span>{event.time}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-400 text-[10px] font-medium uppercase tracking-widest">
-                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <div className="flex items-center gap-2 text-[var(--text-muted)] text-[10px] font-medium uppercase tracking-widest">
+                      <svg className="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       <span className="line-clamp-1">{event.location}</span>
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-400 font-light leading-relaxed mb-8 flex-grow italic opacity-80 line-clamp-3">"{event.description}"</p>
+                  <p className="text-sm text-[var(--text-muted)] font-light leading-relaxed mb-8 flex-grow italic opacity-80 line-clamp-3">"{event.description}"</p>
                   
                   <div className="flex flex-col gap-3 mt-auto">
                     {activeTab === 'upcoming' && event.registration_link && (
-                      <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-yellow-400 text-black text-[10px] font-black rounded-xl text-center shadow-2xl uppercase tracking-[0.2em] hover:bg-yellow-500 hover:scale-105 transition-all">REGISTER NOW ↗</a>
+                      <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-[#021496] text-white text-[10px] font-black rounded-xl text-center shadow-lg uppercase tracking-[0.2em] hover:brightness-110 transition-all">REGISTER NOW ↗</a>
                     )}
                     {event.summary_file_url && (
-                      <button type="button" onClick={() => window.open(event.summary_file_url, '_blank')} className="w-full py-3 bg-white/5 text-white text-[10px] font-black rounded-xl text-center border border-white/10 uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
+                      <button type="button" onClick={() => window.open(event.summary_file_url, '_blank')} className="w-full py-3 bg-transparent text-[var(--text-main)] text-[10px] font-black rounded-xl text-center border border-[var(--border-color)] uppercase tracking-[0.2em] hover:bg-[var(--secondary-bg)] transition-all">
                         {activeTab === 'conducted' ? 'VIEW REPORT ↗' : 'EVENT BRIEF ↗'}
                       </button>
                     )}

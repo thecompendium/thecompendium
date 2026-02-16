@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Page, Publication, Achievement, TeamMember, Event } from './types';
 import Navbar from './components/Navbar';
@@ -10,6 +11,7 @@ import Events from './pages/Events';
 import Contact from './pages/Contact';
 import Games from './pages/Games';
 import AdminLogin from './pages/AdminLogin';
+import ComingSoon from './pages/ComingSoon';
 import { api } from './services/supabase';
 
 const App: React.FC = () => {
@@ -115,6 +117,8 @@ const App: React.FC = () => {
         return <Games />;
       case Page.AdminLogin:
         return <AdminLogin onLogin={handleLogin} />;
+      case Page.ComingSoon:
+        return <ComingSoon onBack={() => window.location.hash = Page.Home} />;
       default:
         return <Home onNavigate={(p) => window.location.hash = p} publications={publications} achievements={achievements} events={events} isAdmin={isAdmin} setPublications={setPublications} setAchievements={setAchievements} />;
     }
