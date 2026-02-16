@@ -88,5 +88,6 @@ export enum Page {
   Achievements = 'achievements',
   About = 'about',
   Contact = 'contact',
-  AdminLogin = 'admin-login'
+  AdminLogin = 'admin-login',
+  Games = 'games'
 }

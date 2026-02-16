@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Page, Publication, Achievement, TeamMember, Event } from './types';
 import Navbar from './components/Navbar';
@@ -9,6 +8,7 @@ import News from './pages/News';
 import Achievements from './pages/Achievements';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
+import Games from './pages/Games';
 import AdminLogin from './pages/AdminLogin';
 import { api } from './services/supabase';
 
@@ -36,10 +36,8 @@ const App: React.FC = () => {
   }, [isDarkMode]);
 
   const fetchData = async () => {
-    console.log("[App] Starting data fetch...");
     setIsLoading(true);
     try {
-      // Use individual try-catches or Promise.allSettled to prevent total failure
       const results = await Promise.allSettled([
         api.publications.getAll(),
         api.achievements.getAll(),
@@ -48,21 +46,13 @@ const App: React.FC = () => {
       ]);
 
       if (results[0].status === 'fulfilled') setPublications(results[0].value as Publication[]);
-      else console.error("Publications fetch failed", results[0].reason);
-
       if (results[1].status === 'fulfilled') setAchievements(results[1].value as Achievement[]);
-      else console.error("Achievements fetch failed", results[1].reason);
-
       if (results[2].status === 'fulfilled') setTeam(results[2].value as TeamMember[]);
-      else console.error("Team fetch failed", results[2].reason);
-
       if (results[3].status === 'fulfilled') setEvents(results[3].value as Event[]);
-      else console.error("Events fetch failed", results[3].reason);
 
     } catch (error) {
       console.error("Critical Supabase Fetch Error:", error);
     } finally {
-      console.log("[App] Initial fetch complete.");
       setIsLoading(false);
     }
   };
@@ -121,6 +111,8 @@ const App: React.FC = () => {
         return <Achievements achievements={achievements} isAdmin={isAdmin} setAchievements={setAchievements} />;
       case Page.Contact:
         return <Contact />;
+      case Page.Games:
+        return <Games />;
       case Page.AdminLogin:
         return <AdminLogin onLogin={handleLogin} />;
       default:

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page } from '../types';
 
@@ -12,7 +11,18 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, isAdmin }) => {
     <footer className="bg-black text-white pt-20 pb-10 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="lg:col-span-1">
-          <h3 className="text-xl font-bold mb-6 serif-font">The Compendium</h3>
+          <div className="flex items-center gap-3 mb-6 group">
+            <h3 className="text-xl font-bold serif-font">The Compendium</h3>
+            <button 
+              onClick={() => onNavigate(Page.Games)}
+              className="text-yellow-400 hover:text-white transition-all transform hover:scale-110 active:scale-95"
+              title="Enter Gaming Dashboard"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+              </svg>
+            </button>
+          </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-6">
             A news and publication society empowering students to showcase their talent in writing, designing, photography, marketing, and social media management while gaining professional experience.
           </p>
@@ -33,6 +43,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, isAdmin }) => {
             <li><button onClick={() => onNavigate(Page.About)} className="hover:text-white transition-colors">About Us</button></li>
             <li><button onClick={() => onNavigate(Page.News)} className="hover:text-white transition-colors">Publications</button></li>
             <li><button onClick={() => onNavigate(Page.Events)} className="hover:text-white transition-colors">Events</button></li>
+            <li><button onClick={() => onNavigate(Page.Games)} className="hover:text-white transition-colors">Games</button></li>
             <li><button onClick={() => onNavigate(Page.Contact)} className="hover:text-white transition-colors">Contact</button></li>
           </ul>
         </div>
