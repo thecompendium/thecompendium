@@ -332,8 +332,10 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
             <div className="space-y-6 text-left self-center">
               <h2 className="text-3xl font-bold serif-font text-white">About Us</h2>
               <div className="space-y-4 text-gray-300 font-light text-base leading-relaxed">
-                <p>Welcome to Compendium IARE, the official news and publication society of IARE.</p>
-                <p>A student-led movement dedicated to finding expression for voices that shape campus culture.</p>
+                <p>Welcome to Compendium IARE, the official newspaper curated by the News and Publication Society of the Institute of Aeronautical Engineering (IARE).</p>
+                <p>We are a vibrant student-led community passionate about storytelling, journalism, and creative expression. Our mission is to inform, inspire, and connect the IARE community through timely news, insightful articles, and captivating stories that reflect the dynamic spirit of our campus.</p>
+                <p>From covering campus events, academic highlights, and student achievements to exploring tech trends, social issues, and creative content, Compendium IARE is your go-to source for everything happening at IARE — and beyond.</p>
+                <p>We aim to foster a culture of curiosity, critical thinking, and collaboration through the power of words. Whether you're a reader, a writer, or an aspiring journalist, there's a place for you here.</p>
               </div>
               <p className="text-yellow-400 font-bold text-base italic underline underline-offset-4">Curating Excellence. Since 2019.</p>
             </div>
