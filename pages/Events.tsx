@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Event } from '../types';
 import { api, storageService } from '../services/supabase';
@@ -21,7 +20,6 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
     location: '',
     description: '',
     image_url: '',
-    category: '',
     registration_link: '',
     summary_file_url: ''
   };
@@ -93,7 +91,7 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
         setEvents(prev => prev.map(ev => ev.id === updated.id ? updated : ev));
       } else {
         const created = await api.events.create(formState);
-        setEvents(prev => [...prev, created].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+        setEvents(prev => [created, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       }
       setShowModal(false);
     } catch (e: any) {
@@ -116,15 +114,9 @@ const Events: React.FC<EventsProps> = ({ events, isAdmin, setEvents }) => {
                 </button>
               </div>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Event Title</label>
-                    <input required placeholder="Headline..." className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-yellow-400" value={formState.title} onChange={e => setFormState({...formState, title: e.target.value})} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Category</label>
-                    <input placeholder="e.g. Workshop" className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-yellow-400" value={formState.category || ''} onChange={e => setFormState({...formState, category: e.target.value})} />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-1">Event Title</label>
+                  <input required placeholder="Headline..." className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-yellow-400" value={formState.title} onChange={e => setFormState({...formState, title: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">

@@ -183,11 +183,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate, publications, achievements, eve
                       <div key={event.id} className="group relative bg-[#050a18] rounded-xl overflow-hidden flex flex-col h-full shadow-2xl transition-all text-left">
                         <div className="h-48 overflow-hidden relative">
                           <img src={event.image_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                          <div className="absolute top-4 right-4">
-                            <span className="px-3 py-1 bg-[#facc15] text-white text-[10px] font-bold rounded-full uppercase tracking-widest shadow-xl">
-                              {event.category || 'Event'}
-                            </span>
-                          </div>
+                          {event.category && (
+                            <div className="absolute top-4 right-4">
+                              <span className="px-3 py-1 bg-[#facc15] text-white text-[10px] font-bold rounded-full uppercase tracking-widest shadow-xl">
+                                {event.category}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="p-6 flex flex-col flex-grow">
                           <h3 className="text-xl font-bold serif-font mb-4 leading-tight text-white group-hover:text-yellow-400 transition-colors h-[3rem] line-clamp-2">{event.title}</h3>

@@ -74,7 +74,6 @@ export const api = {
         imageurl: pub.image_url,
         image_url: pub.image_url,
         file_url: pub.file_url
-        // 'link' removed as it does not exist in your schema
       };
       const { data, error } = await supabase.from('publications').insert([payload]).select();
       if (error) throw error;
@@ -89,7 +88,6 @@ export const api = {
         imageurl: pub.image_url,
         image_url: pub.image_url,
         file_url: pub.file_url
-        // 'link' removed as it does not exist in your schema
       };
       const { data, error } = await supabase.from('publications').update(payload).eq('id', id).select();
       if (error) throw error;
@@ -178,7 +176,7 @@ export const api = {
         location: event.location,
         description: event.description,
         imageurl: event.image_url,
-        category: event.category,
+        // Removed 'category' because it's missing from your database
         registration_link: event.registration_link,
         summary_file_url: event.summary_file_url
       };
@@ -194,7 +192,7 @@ export const api = {
         location: event.location,
         description: event.description,
         imageurl: event.image_url,
-        category: event.category,
+        // Removed 'category' because it's missing from your database
         registration_link: event.registration_link,
         summary_file_url: event.summary_file_url
       };
