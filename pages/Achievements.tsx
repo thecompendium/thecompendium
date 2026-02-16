@@ -57,17 +57,15 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
   };
 
   const handleAcceptSubmission = (sub: AchievementSubmission) => {
-    // Transfers submission data to the creation form
     setFormState({
       name: sub.name,
       department: `${sub.branch} (Year ${sub.year})`,
       description: sub.description,
-      roll_number: '', // Admin fills this
-      category: '',    // Admin fills this
-      image_url: '',   // Admin uploads this
+      roll_number: '', 
+      category: '',    
+      image_url: '',   
     });
     setShowModal(true);
-    // Note: We don't delete yet. Admin deletes after successful publishing if they wish.
   };
 
   const handleDismissSubmission = async (id: string) => {
@@ -158,8 +156,19 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
   };
 
   return (
-    <div className="pt-40 pb-32 px-6 bg-[#000821] min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className="pt-40 pb-32 px-6 min-h-screen relative overflow-hidden bg-white">
+      {/* BACKGROUND PATTERN LAYER */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-100"
+        style={{ 
+          backgroundImage: `url('https://ekrrilidqrjbddapdfkc.supabase.co/storage/v1/object/public/the_compendium_files/site_assets/Untitled%20design%20(2).png')`,
+          backgroundSize: '1000px',
+          backgroundRepeat: 'repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative z-10">
         
         {/* VISITOR SUBMISSION MODAL */}
         {showSubmissionPortal && (
@@ -270,12 +279,12 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
         {/* HEADER */}
         <div className="text-center mb-24 max-w-4xl mx-auto relative">
           <span className="inline-block px-4 py-1.5 bg-yellow-400 text-black text-[10px] font-black uppercase rounded-full mb-8 shadow-xl tracking-widest">Celebrating Excellence</span>
-          <h1 className="text-6xl font-bold serif-font mb-8 text-white">Student Wall of Fame</h1>
-          <p className="text-xl text-gray-400 font-light leading-relaxed">Showcasing creativity and exceptional milestones of our students.</p>
+          <h1 className="text-6xl font-bold serif-font mb-8 text-slate-900">Student Wall of Fame</h1>
+          <p className="text-slate-500 font-light text-h4 leading-relaxed">Showcasing creativity and exceptional milestones of our students.</p>
           
           <div className="flex flex-wrap justify-center gap-6 mt-12">
             <button type="button" onClick={() => setShowSubmissionPortal(true)} className="px-10 py-4 bg-[#021496] text-white font-black rounded-2xl shadow-xl uppercase tracking-widest text-[10px] border border-white/10 hover:bg-[#0025f5] transition-all">SUBMIT STORY</button>
-            {isAdmin && <button type="button" onClick={handleOpenAdd} className="px-10 py-4 bg-yellow-400 text-black font-black rounded-2xl shadow-xl uppercase tracking-widest text-[10px] hover:bg-yellow-500 transition-all">+ ADD RECORD</button>}
+            {isAdmin && <button type="button" onClick={handleOpenAdd} className="px-10 py-4 bg-yellow-500 text-black font-black rounded-2xl shadow-xl uppercase tracking-widest text-[10px] hover:bg-yellow-600 transition-all">+ ADD RECORD</button>}
           </div>
         </div>
 
@@ -283,46 +292,46 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
         {isAdmin && submissions.length > 0 && (
           <section className="mb-32 animate-fadeInUp">
             <div className="flex items-center gap-4 mb-10">
-              <span className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse"></span>
-              <h2 className="text-3xl font-bold serif-font text-white">Pending Submissions Log</h2>
-              <span className="ml-auto px-4 py-1 bg-white/5 rounded-full border border-white/10 text-[10px] font-black text-gray-400 uppercase tracking-widest">{submissions.length} Awaiting Review</span>
+              <span className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></span>
+              <h2 className="text-3xl font-bold serif-font text-slate-900">Pending Submissions Log</h2>
+              <span className="ml-auto px-4 py-1 bg-white rounded-full border border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">{submissions.length} Awaiting Review</span>
             </div>
             
-            <div className="overflow-hidden rounded-[2rem] border border-white/5 bg-[#1a1a1a] shadow-3xl">
+            <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-white/95 shadow-3xl backdrop-blur-md">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-black/40 border-b border-white/5">
-                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Student Info</th>
-                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Contact</th>
-                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Achievement Summary</th>
-                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 text-right">Actions</th>
+                  <tr className="bg-slate-50 border-b border-slate-100">
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Student Info</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Contact</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Achievement Summary</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-100">
                   {submissions.map((sub) => (
-                    <tr key={sub.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-8 py-8">
-                        <p className="text-white font-bold text-lg mb-1">{sub.name}</p>
-                        <p className="text-yellow-500 text-[10px] font-black uppercase tracking-widest">{sub.branch} • Year {sub.year}</p>
+                        <p className="text-slate-900 font-bold text-lg mb-1">{sub.name}</p>
+                        <p className="text-yellow-600 text-[10px] font-black uppercase tracking-widest">{sub.branch} • Year {sub.year}</p>
                       </td>
                       <td className="px-8 py-8">
-                        <p className="text-gray-300 text-xs mb-1 font-medium">{sub.email}</p>
-                        <p className="text-gray-500 text-[10px] tracking-widest">{sub.phone}</p>
+                        <p className="text-slate-600 text-xs mb-1 font-medium">{sub.email}</p>
+                        <p className="text-slate-400 text-[10px] tracking-widest">{sub.phone}</p>
                       </td>
                       <td className="px-8 py-8 max-w-md">
-                        <p className="text-gray-400 text-xs leading-relaxed italic line-clamp-2">"{sub.description}"</p>
+                        <p className="text-slate-500 text-xs leading-relaxed italic line-clamp-2">"{sub.description}"</p>
                       </td>
                       <td className="px-8 py-8 text-right">
                         <div className="flex justify-end gap-3">
                           <button 
                             onClick={() => handleAcceptSubmission(sub)}
-                            className="px-6 py-2.5 bg-green-500/10 text-green-500 border border-green-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-500 hover:text-white transition-all shadow-lg"
+                            className="px-6 py-2.5 bg-green-500/10 text-green-600 border border-green-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-600 hover:text-white transition-all shadow-lg"
                           >
                             Accept
                           </button>
                           <button 
                             onClick={() => handleDismissSubmission(sub.id)}
-                            className="px-6 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all shadow-lg"
+                            className="px-6 py-2.5 bg-red-500/10 text-red-600 border border-red-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-lg"
                           >
                             Dismiss
                           </button>
@@ -356,7 +365,7 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
                 <span className="absolute bottom-4 left-4 px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-widest shadow-xl">{ach.category}</span>
               </div>
 
-              <div className="p-6 flex flex-col flex-grow">
+              <div className="p-6 flex flex-col flex-grow bg-[#211f1e]/95 backdrop-blur-sm">
                 <h3 className="text-xl font-bold serif-font text-white mb-1 group-hover:text-yellow-400 transition-colors line-clamp-1">{ach.name}</h3>
                 <p className="text-[10px] text-yellow-500 font-black uppercase tracking-widest mb-4">{ach.roll_number} • {ach.department}</p>
                 <p className="text-xs text-gray-400 leading-relaxed mb-6 line-clamp-3 flex-grow italic">"{ach.description}"</p>
