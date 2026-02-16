@@ -39,21 +39,24 @@ const DEFAULT_NEW_YEAR = (year: number): JourneyYear => ({
 
 const INITIAL_JOURNEY_DATA: JourneyYear[] = [
   {
-    year: 2024,
-    title: "Milestones & Impact",
-    main_image: "https://ekrrilidqrjbddapdfkc.supabase.co/storage/v1/object/public/the_compendium_files/journey/1741162153112_WhatsApp_Image_2025-03-05_at_13.34.12_6549a1d4.jpg",
-    description: "Commemorating its fifth anniversary, the club celebrated its journey with a vibrant lineup of intellectually and creatively stimulating events. It reaffirmed its role as a hub for innovation, expression, and impactful student experiences.",
-    events: ["DESIGN FOR EVERYONE - WORKSHOP", "QUIZ - THE BATTLE OF BRAINS", "VIBE CODING", "COURTROOM CONUNDRUM", "STATE VS A NOBODY"],
-    new_editions: ["ARTICLES", "WEBSITE", "CULTURAL FEST MAGAZINE (2024-2025)", "ANNUAL MAGAZINE (2024-2025)"],
+    year: 2019,
+    title: "Vision & Beginnings",
+    main_image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1200",
+    description: "The founding year of The Compendium. A group of visionary students came together to create a platform that bridges the gap between campus news and creative expression, setting the foundation for years of excellence and intellectual dialogue at IARE.",
+    events: ["INAUGURAL GENERAL BODY MEETING", "FOUNDATION WORKSHOP", "FIRST RECRUITMENT DRIVE"],
+    new_editions: ["NEWSLETTER VOL 1", "SOCIETY CHARTER"],
     leaders: [
-      { id: 'l1', name: 'K YAGNESH REDDY', role: 'PRESIDENT', image_url: 'https://picsum.photos/seed/kynr/300/300', tagline: 'Leading the club\'s vision and strategic initiatives, coordinating with different teams to drive innovation and growth.', reflection: "Leadership is about empathy and passion." },
-      { id: 'l2', name: 'MULE BHARATH', role: 'CREATIVE DIRECTOR', image_url: 'https://picsum.photos/seed/mbht/300/300', tagline: 'Overseeing the club\'s creative direction, managing design projects, and ensuring visual consistency across all publications.', reflection: "Design is thinking made visual." },
-      { id: 'l3', name: 'ROHIT JOY', role: 'MANAGING DIRECTOR', image_url: 'https://picsum.photos/seed/rjoy/300/300', tagline: 'Managing day-to-day operations, coordinating events, and ensuring smooth execution of club activities and projects.', reflection: "Operations are the heartbeat of our society." }
+      { 
+        id: 'l1', 
+        name: 'ANUSHA VAJHA', 
+        role: 'FOUNDING PRESIDENT', 
+        image_url: 'https://picsum.photos/seed/anusha/400/400', 
+        tagline: 'Establishing the core values and mission of the society, ensuring a sustainable platform for student expression.', 
+        reflection: "Leadership is about creating more leaders. It started with a simple belief: every student voice deserves a canvas." 
+      }
     ],
     domain_heads: [
-      { id: 'dh1', name: 'KRANTHI KUMAR VEGGALAM', role: 'DESIGN HEAD', image_url: 'https://picsum.photos/seed/kkv/400/400' },
-      { id: 'dh2', name: 'KEERTHI NORI', role: 'WRITER HEAD', image_url: 'https://picsum.photos/seed/knori/400/400' },
-      { id: 'dh3', name: 'ABHINAV VIKAS', role: 'PHOTOGRAPHY HEAD', image_url: 'https://picsum.photos/seed/avikas/400/400' }
+      { id: 'dh1', name: 'KRANTHI KUMAR', role: 'DESIGN HEAD', image_url: 'https://picsum.photos/seed/kk/400/400' }
     ],
     gallery: []
   }
@@ -61,7 +64,7 @@ const INITIAL_JOURNEY_DATA: JourneyYear[] = [
 
 const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
   const [journeyData, setJourneyData] = useState<JourneyYear[]>([]);
-  const [activeYear, setActiveYear] = useState<number>(2024);
+  const [activeYear, setActiveYear] = useState<number>(2019);
   const [showMore, setShowMore] = useState(false);
   const [aboutUsImage, setAboutUsImage] = useState('');
   const [viewMode, setViewMode] = useState<'snapshot' | 'full'>('snapshot');
@@ -98,10 +101,14 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
         const sorted = JSON.parse(savedJourney).sort((a: any, b: any) => b.year - a.year);
         setJourneyData(sorted);
         if (sorted.length > 0) setActiveYear(sorted[0].year);
-      } else setJourneyData(INITIAL_JOURNEY_DATA);
+      } else {
+        setJourneyData(INITIAL_JOURNEY_DATA);
+        setActiveYear(2019);
+      }
       setManualStats({ members: sMembs || '50+' });
     } catch (e: any) {
       setJourneyData(INITIAL_JOURNEY_DATA);
+      setActiveYear(2019);
     } finally { setIsLoading(false); }
   }, []);
 
@@ -113,6 +120,13 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
 
   const handleUpdateYearText = (field: keyof JourneyYear, value: any) => {
     setJourneyData(prev => prev.map(y => y.year === activeYear ? { ...y, [field]: value } : y));
+    setHasUnsavedChanges(true);
+  };
+
+  const handleUpdateYearNumber = (newYear: number) => {
+    if (isNaN(newYear)) return;
+    setJourneyData(prev => prev.map(y => y.year === activeYear ? { ...y, year: newYear } : y));
+    setActiveYear(newYear); // Maintain focus on the edited year
     setHasUnsavedChanges(true);
   };
 
@@ -140,7 +154,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
   };
 
   const handleAddNewYear = () => {
-    const nextYear = Math.max(...journeyData.map(y => y.year), 2024) + 1;
+    const nextYear = Math.max(...journeyData.map(y => y.year), 2018) + 1;
     setJourneyData(prev => [DEFAULT_NEW_YEAR(nextYear), ...prev]);
     setActiveYear(nextYear);
     setHasUnsavedChanges(true);
@@ -153,11 +167,10 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
     setJourneyData(newData);
     setHasUnsavedChanges(true);
     
-    // Switch to another year after deletion
     if (newData.length > 0) {
       setActiveYear(newData[0].year);
     } else {
-      setActiveYear(2024);
+      setActiveYear(2019);
     }
   };
 
@@ -316,17 +329,17 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                 <p>Welcome to Compendium IARE, the official news and publication society of IARE.</p>
                 <p>A student-led movement dedicated to finding expression for voices that shape campus culture.</p>
               </div>
-              <p className="text-yellow-400 font-bold text-base italic underline underline-offset-4">Curating Excellence. Since 2020.</p>
+              <p className="text-yellow-400 font-bold text-base italic underline underline-offset-4">Curating Excellence. Since 2019.</p>
             </div>
             <div className="relative group overflow-hidden rounded-2xl shadow-xl border border-white/5 aspect-[1.5/1] bg-[#211f1e]">
-               <img src={aboutUsImage || "https://picsum.photos/seed/about/800/600"} className="w-full h-full object-cover" alt="Banner" />
+               <img src={aboutUsImage || "https://picsum.photos/seed/about-banner/800/600"} className="w-full h-full object-cover" alt="Banner" />
                {isAdmin && (
                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70]"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'about')} /><span className="bg-yellow-400 text-black px-5 py-2.5 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-2xl">Upload Banner</span></label>
                )}
             </div>
           </section>
 
-          {/* Facts Section */}
+          {/* Key Facts Section */}
           <section className="py-20">
             <div className="max-w-7xl mx-auto px-6 text-center">
               <h2 className="text-3xl font-bold serif-font mb-3">Key Facts</h2>
@@ -334,7 +347,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
               
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
+                  { icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', val: dynamicStats.pubs, label: 'Publications' },
                   { icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', val: dynamicStats.articles, label: 'Articles' },
                   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', val: dynamicStats.editions, label: 'Editions' },
                   { icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', val: manualStats.members, label: 'Members', isManual: true }
@@ -384,7 +397,16 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                   
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-3xl font-bold serif-font text-white">{activeYear}</h3>
+                      {isAdmin ? (
+                        <input 
+                          type="number"
+                          className="bg-transparent text-3xl font-bold serif-font text-white w-24 focus:outline-none border-b border-white/10" 
+                          value={activeYear} 
+                          onChange={e => handleUpdateYearNumber(parseInt(e.target.value) || activeYear)} 
+                        />
+                      ) : (
+                        <h3 className="text-3xl font-bold serif-font text-white">{activeYear}</h3>
+                      )}
                       <span className="w-px h-6 bg-white/20"></span>
                       {isAdmin ? (
                         <input className="bg-transparent text-yellow-400 text-2xl font-bold serif-font w-full focus:outline-none border-b border-white/10" value={currentYearData.title} onChange={e => handleUpdateYearText('title', e.target.value)} />
@@ -437,17 +459,17 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                         {showMore ? 'Less' : 'More Details'}
                       </button>
                       <button onClick={() => { setViewMode('full'); window.scrollTo(0,0); }} className="text-[9px] font-black uppercase text-yellow-400 hover:text-white underline underline-offset-4">
-                        View Reflections
+                        View Full Journey
                       </button>
                     </div>
                   </div>
 
-                  {/* TIMELINE */}
+                  {/* Timeline Selection */}
                   <div className="mt-16 relative pt-8">
                     <div className="absolute top-11 left-0 right-0 h-px bg-white/20"></div>
-                    <div className="flex justify-start items-center relative gap-6 px-2">
+                    <div className="flex justify-start items-center relative gap-6 px-2 overflow-x-auto no-scrollbar pb-4">
                       {journeyData.slice().sort((a,b)=>a.year-b.year).map((y) => (
-                         <div key={y.year} className="flex flex-col items-center gap-3 cursor-pointer group" onClick={() => { setActiveYear(y.year); setShowMore(false); }}>
+                         <div key={y.year} className="flex flex-col items-center gap-3 cursor-pointer group flex-shrink-0" onClick={() => { setActiveYear(y.year); setShowMore(false); }}>
                             <span className={`text-[9px] font-black tracking-widest transition-all ${activeYear === y.year ? 'text-yellow-400 scale-110' : 'text-gray-400 group-hover:text-white'}`}>{y.year}</span>
                             <div className={`w-3 h-3 rotate-45 border-2 transition-all ${activeYear === y.year ? 'bg-yellow-400 border-yellow-400' : 'bg-transparent border-white/30'}`}></div>
                          </div>
@@ -456,13 +478,18 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                   </div>
                 </div>
 
-                {/* LEADERS LIST - REDESIGNED PER SCREENSHOT */}
+                {/* Core Leaders List - Redesigned to match requested aesthetics */}
                 <div className="w-full lg:w-1/2 space-y-16 lg:pl-12 text-left">
                    {(currentYearData.leaders || []).map((leader) => (
                      <div key={leader.id} className="flex flex-col sm:flex-row gap-10 items-center sm:items-start group relative transition-all">
                         <div className="relative w-40 h-40 rounded-full overflow-hidden border-[3px] border-white/30 flex-shrink-0 bg-[#0a0f2b] shadow-2xl">
                            <img src={leader.image_url || `https://picsum.photos/seed/${leader.id}/400/400`} className="w-full h-full object-cover" alt={leader.name} />
-                           {isAdmin && <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} /><span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span></label>}
+                           {isAdmin && (
+                             <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity">
+                               <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'leader', leader.id)} />
+                               <span className="text-[10px] font-black uppercase text-white tracking-widest">Update</span>
+                             </label>
+                           )}
                         </div>
                         <div className="flex-grow pt-2 text-center sm:text-left">
                            <div>
@@ -472,13 +499,13 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                                 <h4 className="text-2xl md:text-3xl font-bold serif-font text-white uppercase tracking-tight">{leader.name}</h4>
                              )}
                              {isAdmin ? (
-                                <input className="bg-transparent border-b border-white/10 text-sm text-gray-400 font-medium uppercase tracking-[0.2em] w-full focus:outline-none" value={leader.role} onChange={e => handleUpdateLeader(leader.id, 'role', e.target.value)} />
+                                <input className="bg-transparent border-b border-white/10 text-sm text-gray-400 font-medium uppercase tracking-[0.2em] w-full focus:outline-none mt-2" value={leader.role} onChange={e => handleUpdateLeader(leader.id, 'role', e.target.value)} />
                              ) : (
                                 <p className="text-xs md:text-sm text-gray-400 font-medium uppercase tracking-[0.2em] mt-2">{leader.role}</p>
                              )}
                            </div>
                            
-                           {/* DOTTED LINE SEPARATOR */}
+                           {/* Dotted Line Separator */}
                            <div className="w-32 border-t-2 border-dotted border-white/20 my-5 mx-auto sm:mx-0"></div>
 
                            {isAdmin ? (
@@ -497,7 +524,11 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                         </div>
                      </div>
                    ))}
-                   {isAdmin && <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-6 border-2 border-dashed border-white/10 rounded-2xl text-[10px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e]/40 relative">+ ADD NEW CORE LEADER</button>}
+                   {isAdmin && (
+                     <button onClick={() => setShowAddLeaderModal(true)} className="w-full py-8 border-2 border-dashed border-white/10 rounded-2xl text-[10px] font-black text-gray-500 hover:text-yellow-400 uppercase tracking-widest transition-all bg-[#211f1e]/40 relative">
+                       + ADD NEW CORE LEADER
+                     </button>
+                   )}
                 </div>
               </div>
             </div>
@@ -520,7 +551,13 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
                            <h3 className="text-2xl font-bold serif-font text-yellow-400">{leader.name}</h3>
                            <span className="px-3 py-0.5 bg-yellow-400/10 text-yellow-400 text-[9px] font-black uppercase rounded-lg border border-yellow-400/20">{leader.role}</span>
                         </div>
-                        {isAdmin ? <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-4 text-white min-h-[200px] text-sm font-light outline-none" value={leader.reflection} onChange={e => handleUpdateLeader(leader.id, 'reflection', e.target.value)} /> : <div className="space-y-4 text-gray-300 font-light text-base italic leading-relaxed">{leader.reflection?.split('\n\n').map((p,idx)=>(<p key={idx}>{p}</p>))}</div>}
+                        {isAdmin ? (
+                          <textarea className="w-full bg-black/20 border border-white/10 rounded-lg p-4 text-white min-h-[200px] text-sm font-light outline-none" value={leader.reflection} onChange={e => handleUpdateLeader(leader.id, 'reflection', e.target.value)} />
+                        ) : (
+                          <div className="space-y-4 text-gray-300 font-light text-base italic leading-relaxed">
+                            {leader.reflection?.split('\n\n').map((p,idx)=>(<p key={idx}>{p}</p>))}
+                          </div>
+                        )}
                      </div>
                   </div>
                 ))}
@@ -605,7 +642,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications }) => {
         </div>
       )}
 
-      {/* SYNC STATUS BAR */}
+      {/* Sync Status Bar */}
       {isAdmin && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[1000] w-full max-lg px-4 pointer-events-none">
           <div className="bg-[#0a0f2b]/95 border border-white/10 p-4 rounded-[2rem] shadow-2xl flex items-center justify-between gap-6 pointer-events-auto backdrop-blur-2xl">
