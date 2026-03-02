@@ -196,6 +196,64 @@ const Achievements: React.FC<AchievementsProps> = ({ achievements, isAdmin, setA
           </div>
         )}
 
+        {/* ADD / EDIT MODAL */}
+        {showModal && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-xl">
+            <div className="max-w-xl w-full bg-[var(--card-bg)] p-10 rounded-[2.5rem] border border-[var(--border-color)] shadow-2xl overflow-y-auto max-h-[90vh]">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold serif-font text-[var(--text-main)]">{formState.id ? 'Edit Record' : 'Add New Record'}</h2>
+                <button type="button" onClick={() => setShowModal(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6 text-left">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Full Name</label>
+                  <input required placeholder="Student name" className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-5 py-4 text-[var(--text-main)] outline-none focus:border-[#021496]" value={formState.name} onChange={e => setFormState({...formState, name: e.target.value})} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Roll Number</label>
+                    <input placeholder="Roll/ID" className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-5 py-4 text-[var(--text-main)] outline-none focus:border-[#021496]" value={formState.roll_number} onChange={e => setFormState({...formState, roll_number: e.target.value})} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Department</label>
+                    <input placeholder="Department" className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-5 py-4 text-[var(--text-main)] outline-none focus:border-[#021496]" value={formState.department} onChange={e => setFormState({...formState, department: e.target.value})} />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Category</label>
+                  <input placeholder="e.g. Arts, Sports" className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-5 py-4 text-[var(--text-main)] outline-none focus:border-[#021496]" value={formState.category} onChange={e => setFormState({...formState, category: e.target.value})} />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] ml-1">Description</label>
+                  <textarea rows={4} placeholder="Brief description" className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-5 py-4 text-[var(--text-main)] outline-none resize-none focus:border-[#021496]" value={formState.description} onChange={e => setFormState({...formState, description: e.target.value})} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-[var(--card-bg)] border border-dashed border-[var(--border-color)] rounded-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-2">Portrait (required)</p>
+                    <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'profile')} className="text-[10px] text-[var(--text-main)]" />
+                    {status && <p className="text-sm text-[var(--text-muted)] mt-2">{status}</p>}
+                  </div>
+                  <div className="p-4 bg-[var(--card-bg)] border border-dashed border-[var(--border-color)] rounded-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-2">Work / Project (optional)</p>
+                    <input type="file" accept="*" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'portfolio')} className="text-[10px] text-[var(--text-main)]" />
+                  </div>
+                </div>
+
+                <button disabled={isSyncing} type="submit" className="w-full py-5 bg-yellow-400 text-black font-black rounded-xl uppercase tracking-widest text-[11px] shadow-2xl hover:bg-yellow-500 transition-all">
+                  {isSyncing ? (status || 'Saving...') : (formState.id ? 'SAVE CHANGES' : 'ADD RECORD')}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* HEADER */}
         <div className="text-center mb-24 max-w-3xl mx-auto">
           <span className="inline-block px-4 py-1.5 bg-[#021496]/10 text-[#021496] text-[10px] font-black uppercase rounded-full mb-8 shadow-sm tracking-[0.2em] border border-[#021496]/20">Celebrating Excellence</span>
