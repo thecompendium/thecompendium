@@ -337,7 +337,7 @@ const About: React.FC<AboutProps> = ({ isAdmin, publications, team, setTeam }) =
               <p className="text-[var(--accent-color)] font-bold text-lg italic border-b-2 border-[var(--accent-color)] w-fit pb-1">Curating Excellence. Since 2019.</p>
             </div>
             <div className="relative group overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-[var(--border-color)] aspect-[1.5/1] bg-[var(--secondary-bg)]">
-               <img src={aboutUsImage || "https://picsum.photos/seed/about-banner/800/600"} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Banner" />
+               <img src={aboutUsImage} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Banner" />
                {isAdmin && (
                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer z-[70] transition-opacity"><input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleStageImage(e.target.files[0], 'about')} /><span className="bg-yellow-400 text-black px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-2xl">Upload Banner</span></label>
                )}
